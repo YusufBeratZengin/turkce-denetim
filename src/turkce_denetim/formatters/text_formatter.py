@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from turkce_denetim.models import Severity
@@ -42,7 +43,19 @@ def format_text(
     }
 
     for res in results:
-        file_path = res.path or "<stdin>"
+        raw_path = res.path or "<stdin>"
+        if raw_path != "<stdin>":
+            try:
+                p = Path(raw_path)
+                cwd = Path.cwd()
+                if p.is_absolute() and p.is_relative_to(cwd):
+                    file_path = p.relative_to(cwd).as_posix()
+                else:
+                    file_path = p.as_posix()
+            except (ValueError, AttributeError):
+                file_path = raw_path
+        else:
+            file_path = raw_path
         total_words += res.word_count
 
         for finding in res.findings:

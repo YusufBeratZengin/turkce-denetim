@@ -101,6 +101,33 @@ turkce-denetim metin.md --score-only
 | `1` | Denetim hatası: bir veya daha fazla `error` önem derecesinde bulgu tespit edildi (örn. yazım ve bağlaç hataları). |
 | `2` | Kullanım, yapılandırma veya G/Ç (I/O) hatası: geçersiz CLI bağımsız değişkenleri, okunamayan dosyalar veya hatalı TOML yapılandırması. |
 
+### Canlı Örnek (Live Demo)
+
+```bash
+$ turkce-denetim examples/bad.md --no-color
+examples/bad.md:1:1: warn  [TD008] Metin başında dalkavukça yapay zekâ açılışı tespit edildi ('Elbette!').
+    öneri: Dalkavukça açılış yerine doğrudan konuya veya bilgiye girin.
+examples/bad.md:1:74: info  [TD001] 'gelişmesi ile birlikte' kalıbı çeviri kokusu taşıyabilir; daha yalın bağlaçlar tercih edilebilir.
+    öneri: 'ile birlikte' yerine 'ile', 'bunun yanında', 'ayrıca' veya yalın ek kullanın.
+examples/bad.md:3:1: info  [TD002] Cümle başında 'Bu noktada' dolgu ifadesi tespit edildi.
+    öneri: 'Bu noktada' yerine 'burada', 'bu aşamada' veya doğrudan konuya giren bir ifade tercih edin.
+examples/bad.md:3:12: warn  [TD012] 'dijital dönüşüm yolculuğumuz' klişesi yapay zekâ metinlerinde soyut 'journey' çevirisidir.
+    öneri: 'Yolculuk' metaforu yerine 'süreci', 'adımları' veya somut aşamaları yazın.
+examples/bad.md:3:75: info  [TD013] 'derinlemesine incelemek' ifadesi yapay zekânın sık kullandığı abartılı bir dolgudur.
+    öneri: 'Derinlemesine' yerine 'ayrıntılı biçimde', 'kapsamlıca' veya doğrudan eylemin kendisini yazın.
+examples/bad.md:3:103: warn  [TD004] 'önemlidir ki' kalıbı İngilizce 'it is important that' çevirisidir.
+    öneri: '...önemlidir ki' yerine '...belirtmek gerekir', '...önem taşır' veya doğrudan yargı cümlesi kurun.
+examples/bad.md:5:14: error [TD023] 'herşey' yazımı hatalı; doğrusu 'her şey' olmalıdır.
+    öneri: her şey
+
+--- Denetim Özeti ---
+Taranan belge sayısı : 1
+Toplam kelime sayısı : 39
+Bulgular             : 1 hata, 3 uyarı, 3 bilgi (toplam 7)
+Kural dağılımı       : TD001: 1, TD002: 1, TD004: 1, TD008: 1, TD012: 1, TD013: 1, TD023: 1
+Doğallık Puanı       : 60.0 / 100 (Orta (Belirgin yapay zekâ veya çeviri kokusu))
+```
+
 ---
 
 ## Kural Kataloğu
@@ -235,6 +262,20 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: sonuclar.sarif
+```
+
+---
+
+## Pre-commit Entegrasyonu
+
+Projenizin `.pre-commit-config.yaml` dosyasına ekleyerek her commit öncesinde Markdown ve metin dosyalarını otomatik denetleyebilirsiniz:
+
+```yaml
+repos:
+  - repo: https://github.com/YusufBeratZengin/turkce-denetim
+    rev: v0.1.0
+    hooks:
+      - id: turkce-denetim
 ```
 
 ---

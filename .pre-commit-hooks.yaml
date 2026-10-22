@@ -1,0 +1,7 @@
+- id: turkce-denetim
+  name: turkce-denetim
+  description: Rule-based linter that flags AI-style phrasing and translation calques in Turkish text.
+  entry: turkce-denetim
+  language: python
+  types_or: [markdown, text]
+  files: \.(md|txt)$
