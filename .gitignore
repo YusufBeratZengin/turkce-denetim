@@ -59,3 +59,4 @@ coverage.xml
 # Operating System files
 .DS_Store
 Thumbs.db
+is/
