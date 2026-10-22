@@ -87,7 +87,7 @@ class ParagrafUzunluguRule(Rule):
     name = "paragraf-uzunluğu"
     description = "Paragrafın aşırı uzun olması (varsayılan eşik: 120 kelime)."
     severity = Severity.INFO
-    suggestion = "Paragrafi alt düşünce bloklarına veya alt başlıklara bölün."
+    suggestion = "Paragrafı alt düşünce bloklarına veya alt başlıklara bölün."
 
     def __init__(self, max_words: int = 120) -> None:
         self.max_words = max_words
@@ -138,7 +138,7 @@ class YakinKelimeTekrariRule(Rule):
                 if count >= self.min_repetition:
                     findings.append(
                         self.create_finding(
-                            message=f"'{root}' koku aynı cümle içinde {count} kez tekrarlandı.",
+                            message=f"'{root}' kökü aynı cümle içinde {count} kez tekrarlandı.",
                             line=sentence.line,
                             column=sentence.column,
                             end_line=sentence.end_line,

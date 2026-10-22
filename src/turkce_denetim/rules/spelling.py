@@ -307,7 +307,7 @@ class TirnakTutarsizligiRule(Rule):
     id = "TD024"
     name = "tırnak-tutarsızlığı"
     description = (
-        "Metinde hem duz tirnak (\" / ') hem de tipografik tirnak (“” / ’) karisik kullanimi."
+        "Metinde hem düz tırnak (\" / ') hem de tipografik tırnak (“” / ’) karışık kullanımı."
     )
     severity = Severity.INFO
     suggestion = "Metin boyunca tutarlı tek bir tırnak/kesme stili tercih edin."

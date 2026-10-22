@@ -114,7 +114,7 @@ class SonucOlarakKapanisRule(Rule):
         if match:
             findings.append(
                 self.create_finding(
-                    message=f"Kapanış paragrafi basmakalıp '{match.group(0)}' ile başlıyor.",
+                    message=f"Kapanış paragrafı basmakalıp '{match.group(0)}' ile başlıyor.",
                     line=first_sent.line,
                     column=first_sent.column,
                     end_line=first_sent.line,
@@ -132,7 +132,7 @@ class DunyasiMetaforuRule(Rule):
     name = "dünyası-metaforu"
     description = "'...dünyasında' kalıbı ('in the world of...' çevirisi)."
     severity = Severity.INFO
-    suggestion = "'...dünyasında' yerine doğrudan alan adını yönelme veya bulunma ile belirtin (orn: 'yazılımda')."
+    suggestion = "'...dünyasında' yerine doğrudan alan adını yönelme veya bulunma ile belirtin (örn: 'yazılımda')."
 
     _PATTERN = re.compile(
         r"\b([a-zçğıöşüâîû]+)\s+dünyasın(?:da|dan|a|ı|ın)\b|\bdijital\s+dünyada\b",
@@ -238,7 +238,7 @@ class DerinlemesineRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{match.group(0)}' ifadesi yapay zekânın sik kullandığı abartılı bir dolgudur.",
+                    message=f"'{match.group(0)}' ifadesi yapay zekânın sık kullandığı abartılı bir dolgudur.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,

@@ -17,7 +17,7 @@ class IleBirlikteAsiriRule(Rule):
     name = "ile-birlikte-aşırı"
     description = "'...ile birlikte' dolgu kalıbı ('along with' çevirisi)."
     severity = Severity.INFO
-    suggestion = "'ile birlikte' yerine 'ile', 'bunun yanında', 'ayrica' veya yalın ek kullanın."
+    suggestion = "'ile birlikte' yerine 'ile', 'bunun yanında', 'ayrıca' veya yalın ek kullanın."
 
     # Yalnizca ayri yazilan 'ile birlikte' taranir. 'Bununla birlikte', 'arkadaslarimla birlikte'
     # ve 'Ayse ile birlikte' dogal Turkcedir.
