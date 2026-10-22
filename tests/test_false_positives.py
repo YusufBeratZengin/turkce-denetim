@@ -7,6 +7,7 @@ import pytest
 from turkce_denetim.config import Config
 from turkce_denetim.document import parse_document
 from turkce_denetim.engine import analyze_text
+from turkce_denetim.models import Severity
 from turkce_denetim.rules.registry import ALL_RULES
 
 # (kural kimligi, dogal cumle) - hicbirinde bulgu cikmamali
@@ -112,3 +113,67 @@ def test_config_accepts_string_severity() -> None:
     ids = {f.rule_id for f in result.findings}
     assert "TD022" in ids  # error korunur
     assert "TD002" not in ids  # info elenir
+
+
+NATURAL_PARAGRAPHS = [
+    # 1. News: günün sonunda eve döndük, de/da
+    (
+        "Yoğun geçen festivalin ardından günün sonunda eve döndük ve dinlendik. "
+        "Şehirdeki etkinliklerin yarın da devam edeceği açıklandı."
+    ),
+    # 2. News / Public statement: bu noktada mid-sentence
+    (
+        "Bakanlık heyeti sahadaki çalışmaları yerinde incelerken ulaşılan bu noktada "
+        "yeni tedbirlerin alınacağını bildirdi."
+    ),
+    # 3. Dialogue: proper de/da with names and pronouns
+    (
+        "Ali de geldi mi diye sordu Mehmet. Ayşe gülümseyerek, evet o da salonda "
+        "bizi bekliyor cevabını verdi."
+    ),
+    # 4. Narrative / News: sanki, oysaki
+    (
+        "Hava aniden soğumuştu; sanki kış erkenden gelmişti. Oysaki meteoroloji "
+        "uzmanları sıcaklığın mevsim normallerinde kalacağını öngörmüştü."
+    ),
+    # 5. Technical: çünkü, de/da
+    (
+        "Sunucu yapılandırmasında bellek sınırını artırdık çünkü veri tabanı sorguları "
+        "yoğun yük altında yavaşlıyordu. Önbellek de devreye alınınca yanıt süreleri kısaldı."
+    ),
+    # 6. Technical / Architecture
+    (
+        "Mikroservis mimarisine geçiş sürecinde ekipler bağımsız dağıtım hatları kurdu. "
+        "Bu sayede hata payı azaldı ve sistem kararlılığı yükseldi."
+    ),
+    # 7. Dialogue: mademki, proper de/da
+    (
+        "Mademki herkes hazır, toplantıya başlayabiliriz dedi yönetici. Selin de sunum "
+        "dosyasını ekrana yansıttı."
+    ),
+    # 8. News / Economics
+    (
+        "Merkez Bankası faiz kararını kamuoyuyla paylaştı. Piyasalarda işlem hacmi "
+        "yükselirken yatırımcılar döviz kurlarındaki hareketliliği yakından izliyor."
+    ),
+    # 9. Narrative: belki, halbuki
+    (
+        "Pencerenin kenarında saatlerce oturdu. Belki bir mektup gelir diye umut "
+        "ediyordu; halbuki postacı çoktan sokağın sonuna ulaşmıştı."
+    ),
+    # 10. Technical / DevOps: gelinen bu noktada mid-sentence, de/da
+    (
+        "Konteyner kayıt defterinde imaj boyutlarını optimize ettik. Gelinen bu noktada "
+        "ağ trafiğinde belirgin bir tasarruf sağlandı ve güvenlik testleri de başarıyla tamamlandı."
+    ),
+]
+
+
+@pytest.mark.parametrize("paragraph", NATURAL_PARAGRAPHS)
+def test_natural_paragraphs_zero_errors(paragraph: str) -> None:
+    """Natural Turkish paragraphs must produce zero error-severity findings."""
+    result = analyze_text(paragraph, Config())
+    error_findings = [f for f in result.findings if f.severity == Severity.ERROR]
+    assert error_findings == [], (
+        f"Found unexpected error findings in natural text: {error_findings}"
+    )
