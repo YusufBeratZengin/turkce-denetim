@@ -8,12 +8,19 @@ on:
 
 jobs:
   test:
-    name: Test & Lint (Python ${{ matrix.python-version }})
-    runs-on: ubuntu-latest
+    name: Test & Lint (${{ matrix.os }} - Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
         python-version: ["3.10", "3.12"]
+        include:
+          - os: ubuntu-latest
+            python-version: "3.14"
 
     steps:
       - name: Checkout code
@@ -43,9 +50,17 @@ jobs:
         run: pytest
 
       - name: Smoke test CLI
-        shell: bash
         run: |
           turkce-denetim --version
           turkce-denetim --help
           turkce-denetim tests/fixtures/clean.md
           if turkce-denetim tests/fixtures/dirty.md; then exit 1; fi
+
+      - name: Smoke test installed wheel outside source tree
+        run: |
+          python -m build --wheel
+          mkdir -p "$RUNNER_TEMP/wheel-test"
+          cd "$RUNNER_TEMP/wheel-test"
+          python -m pip install --force-reinstall "$GITHUB_WORKSPACE"/dist/*.whl
+          turkce-denetim --version
+          python -c "import turkce_denetim; from turkce_denetim import analyze_text, Config; r = analyze_text('Doğal ve temiz Türkçe.', Config()); assert r.word_count == 4"
