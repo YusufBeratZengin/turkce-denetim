@@ -332,7 +332,9 @@ class ParagrafAcilisTekrariRule(Rule):
 
     # Doğal metinde art arda paragrafı açabilen zamir ve gösterme sözcükleri; bunlar tek başına
     # tekrar sayılmaz (iki sözcüklü tekrar, 'Bu yüzden ... Bu yüzden ...', yine yakalanır).
-    _COMMON_OPENERS = frozenset(["bu", "şu", "o", "bir", "ben", "biz", "sen", "siz", "ve", "bunlar"])
+    _COMMON_OPENERS = frozenset(
+        ["bu", "şu", "o", "bir", "ben", "biz", "sen", "siz", "ve", "bunlar"]
+    )
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []

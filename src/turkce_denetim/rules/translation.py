@@ -24,7 +24,22 @@ class IleBirlikteAsiriRule(Rule):
     _PATTERN = re.compile(r"\b([^\W\d_]+)\s+ile\s+birlikte\b", re.IGNORECASE)
 
     _PRONOUNS = frozenset(["ben", "sen", "o", "biz", "siz", "onlar", "bu", "şu", "bunlar"])
-    _ABSTRACT_ENDINGS = ("ler", "lar", "lik", "lık", "luk", "lük", "me", "ma", "mesi", "ması", "ış", "iş", "uş", "üş")
+    _ABSTRACT_ENDINGS = (
+        "ler",
+        "lar",
+        "lik",
+        "lık",
+        "luk",
+        "lük",
+        "me",
+        "ma",
+        "mesi",
+        "ması",
+        "ış",
+        "iş",
+        "uş",
+        "üş",
+    )
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []
