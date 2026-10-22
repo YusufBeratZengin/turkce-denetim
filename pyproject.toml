@@ -1,11 +1,11 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
 name = "turkce-denetim"
 version = "0.1.0"
-description = "Turkce metinlerde yapay zeka ve ceviri kaliplarini tespit eden kuralli linter ve CLI."
+description = "Rule-based linter that flags AI-style phrasing and translation calques in Turkish text."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
@@ -42,11 +42,19 @@ classifiers = [
 ]
 dependencies = []
 
+[project.urls]
+Homepage = "https://github.com/YusufBeratZengin/turkce-denetim"
+Source = "https://github.com/YusufBeratZengin/turkce-denetim"
+Issues = "https://github.com/YusufBeratZengin/turkce-denetim/issues"
+Changelog = "https://github.com/YusufBeratZengin/turkce-denetim/blob/main/CHANGELOG.md"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0.0",
     "ruff>=0.4.0",
     "mypy>=1.10.0",
+    "build",
+    "twine",
 ]
 
 [project.scripts]
