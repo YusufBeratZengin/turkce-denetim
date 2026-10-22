@@ -21,13 +21,17 @@ class DeDaBaglaciRule(Rule):
     severity = Severity.ERROR
     suggestion = "Baglac olan 'de/da' her zaman ayri yazilir ve 'te/ta' bicimini almaz. Bulunma durumu eki '-de/-da' ise bitisik yazilir."
 
-    # Fiil cekimi ardindan bitisen -de/-da/-te/-ta (yuksek guvenli)
+    # Yaygin cekimli fiiller ardindan bitisen -de/-da/-te/-ta (yalniz yuksek guvenli durumlar)
+    _COMMON_VERBS = (
+        "gitti|geldi|yaptı|oldu|aldı|verdi|gördü|bildi|kaldı|çıktı|dedi|konuştu|"
+        "buldu|yazdı|okudu|duydu|anladı|geçti|bitti|başladı|istedi|sordu|etti|durdu|baktı|sevdi"
+    )
     _VERB_PAST_DE = re.compile(
-        r"\b([a-zçğıöşü]+(?:dim|din|di|dik|diniz|diler|tim|tin|ti|tik|tiniz|tiler|dım|dın|dı|dık|dınız|dılar|tım|tın|tı|tık|tınız|tılar|düm|dün|dü|dük|dünüz|düler|tüm|tün|tü|tük|tünüz|tüler|dum|dun|du|duk|dunuz|dular|tum|tun|tu|tuk|tunuz|tular))(de|da|te|ta)\b",
+        rf"\b({_COMMON_VERBS})(de|da|te|ta)\b",
         re.IGNORECASE,
     )
     _VERB_GERUND_DE = re.compile(
-        r"\b([a-zçğıöşü]+(?:ıp|ip|up|üp))(ta|te|da|de)\b",
+        r"\b([a-zçğıöşü]+(?:ıp|ip|up|üp))(ta|te)\b",
         re.IGNORECASE,
     )
 
