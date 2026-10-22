@@ -103,7 +103,5 @@ def test_td007_edilgen_yigilmasi() -> None:
     assert findings[0].rule_id == "TD007"
 
     # Negatif: etken fiiller ve sadece 1 edilgen fiil
-    doc_neg = parse_document(
-        "Müdür toplantıyı açtı, planları sundu ve yeni hedefler belirlendi."
-    )
+    doc_neg = parse_document("Müdür toplantıyı açtı, planları sundu ve yeni hedefler belirlendi.")
     assert len(rule.check(doc_neg)) == 0

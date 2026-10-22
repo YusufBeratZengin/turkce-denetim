@@ -79,7 +79,9 @@ class GununSonundaRule(Rule):
     name = "gunun-sonunda"
     description = "'Günün sonunda' basmakalip deyimi ('at the end of the day' cevirisi)."
     severity = Severity.WARN
-    suggestion = "'Günün sonunda' yerine 'sonucta', 'eninde sonunda', 'nihayetinde' veya 'ozunde' kullanin."
+    suggestion = (
+        "'Günün sonunda' yerine 'sonucta', 'eninde sonunda', 'nihayetinde' veya 'ozunde' kullanin."
+    )
 
     _PATTERN = re.compile(r"\bgünün\s+sonunda\b", re.IGNORECASE)
 
@@ -106,7 +108,9 @@ class OnemlidirKiRule(Rule):
 
     id = "TD004"
     name = "onemlidir-ki"
-    description = "'...önemlidir ki' veya 'şunu belirtmek önemlidir ki' cevirisi ('it is important that')."
+    description = (
+        "'...önemlidir ki' veya 'şunu belirtmek önemlidir ki' cevirisi ('it is important that')."
+    )
     severity = Severity.WARN
     suggestion = "'...önemlidir ki' yerine '...belirtmek gerekir', '...onem tasir' veya dogrudan yargi cumlesi kurun."
 
@@ -138,9 +142,13 @@ class KonusundaYigilmasiRule(Rule):
 
     id = "TD005"
     name = "konusunda-yigilmasi"
-    description = "Ayni cumlede birden cok '...konusunda / konusundaki' yigilmasi ('regarding' cevirisi)."
+    description = (
+        "Ayni cumlede birden cok '...konusunda / konusundaki' yigilmasi ('regarding' cevirisi)."
+    )
     severity = Severity.WARN
-    suggestion = "'konusunda' yerine '-e dair', '-le ilgili' veya dogrudan yonelme/belirtme eki kullanin."
+    suggestion = (
+        "'konusunda' yerine '-e dair', '-le ilgili' veya dogrudan yonelme/belirtme eki kullanin."
+    )
 
     _PATTERN = re.compile(r"\bkonusunda(?:ki)?\b", re.IGNORECASE)
 
@@ -167,9 +175,13 @@ class SahipOlmakRule(Rule):
 
     id = "TD006"
     name = "sahip-olmak"
-    description = "Iyelik eki yerine Ingilizce 'have' karsiligi kullanilan gereksiz 'sahip olmak' yapisi."
+    description = (
+        "Iyelik eki yerine Ingilizce 'have' karsiligi kullanilan gereksiz 'sahip olmak' yapisi."
+    )
     severity = Severity.WARN
-    suggestion = "'...sahiptir / sahip olmak' yerine '...vardir', '...bulunur' veya iyelik eki kullanin."
+    suggestion = (
+        "'...sahiptir / sahip olmak' yerine '...vardir', '...bulunur' veya iyelik eki kullanin."
+    )
 
     # 'özelliklere sahiptir', 'hıza sahip bir telefon', 'sahip olmak'
     _PATTERN = re.compile(
@@ -213,7 +225,9 @@ class EdilgenYigilmasiRule(Rule):
 
     id = "TD007"
     name = "edilgen-yigilmasi"
-    description = "Tek bir cumlede 3 veya daha fazla edilgen eylem bulunmasi (edilgen cati yigilmasi)."
+    description = (
+        "Tek bir cumlede 3 veya daha fazla edilgen eylem bulunmasi (edilgen cati yigilmasi)."
+    )
     severity = Severity.WARN
     suggestion = "Edilgen fiilleri etken catiya donusturerek cumlenin oznesini belirginlestirin."
 
@@ -222,10 +236,22 @@ class EdilgenYigilmasiRule(Rule):
         re.IGNORECASE,
     )
 
-    _NOUN_EXCLUSIONS = frozenset([
-        "toplantı", "ayrıntı", "bağlantı", "sıkıntı", "yaşantı", "görüntü",
-        "akıntı", "özentü", "sızıntı", "gezinti", "çıkıntı", "kalıntı",
-    ])
+    _NOUN_EXCLUSIONS = frozenset(
+        [
+            "toplantı",
+            "ayrıntı",
+            "bağlantı",
+            "sıkıntı",
+            "yaşantı",
+            "görüntü",
+            "akıntı",
+            "özentü",
+            "sızıntı",
+            "gezinti",
+            "çıkıntı",
+            "kalıntı",
+        ]
+    )
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []

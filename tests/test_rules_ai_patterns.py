@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from turkce_denetim.document import parse_document
 from turkce_denetim.rules.ai_patterns import (
-    DunyasiMetaforuRule,
     DerinlemesineRule,
+    DunyasiMetaforuRule,
     ElbetteAcilisRule,
     HarikaSoruRule,
     KapsamliSekildeRule,
@@ -41,16 +41,14 @@ def test_td009_harika_soru() -> None:
 def test_td010_sonuc_olarak_kapanis() -> None:
     rule = SonucOlarakKapanisRule()
     doc_pos = parse_document(
-        "Giriş paragrafında konuyu açıkladık.\n\n"
-        "Sonuç olarak, bu yöntemlerin tümü etkilidir."
+        "Giriş paragrafında konuyu açıkladık.\n\nSonuç olarak, bu yöntemlerin tümü etkilidir."
     )
     findings = rule.check(doc_pos)
     assert len(findings) == 1
     assert findings[0].rule_id == "TD010"
 
     doc_neg = parse_document(
-        "Giriş paragrafında konuyu açıkladık.\n\n"
-        "Tüm bu adımlar sistemin güvenliğini sağlar."
+        "Giriş paragrafında konuyu açıkladık.\n\nTüm bu adımlar sistemin güvenliğini sağlar."
     )
     assert len(rule.check(doc_neg)) == 0
 
@@ -115,15 +113,13 @@ def test_td015_uclu_sifat_dizisi() -> None:
 def test_td016_paragraf_acilis_tekrari() -> None:
     rule = ParagrafAcilisTekrariRule()
     doc_pos = parse_document(
-        "Ayrıca yeni sistem kuralları açıklandı.\n\n"
-        "Ayrıca eski yöntemler terk edildi."
+        "Ayrıca yeni sistem kuralları açıklandı.\n\nAyrıca eski yöntemler terk edildi."
     )
     findings = rule.check(doc_pos)
     assert len(findings) == 1
     assert findings[0].rule_id == "TD016"
 
     doc_neg = parse_document(
-        "İlk olarak kurallar açıklandı.\n\n"
-        "Bunun yanında eski yöntemler terk edildi."
+        "İlk olarak kurallar açıklandı.\n\nBunun yanında eski yöntemler terk edildi."
     )
     assert len(rule.check(doc_neg)) == 0

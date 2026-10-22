@@ -15,7 +15,9 @@ class ElbetteAcilisRule(Rule):
 
     id = "TD008"
     name = "elbette-acilis"
-    description = "Metin veya yanit basindaki dalkavukca acilis unlemleri ('Elbette!', 'Kesinlikle!')."
+    description = (
+        "Metin veya yanit basindaki dalkavukca acilis unlemleri ('Elbette!', 'Kesinlikle!')."
+    )
     severity = Severity.WARN
     suggestion = "Dalkavukca acilis yerine dogrudan konuya veya bilgiye girin."
 
@@ -83,7 +85,9 @@ class SonucOlarakKapanisRule(Rule):
 
     id = "TD010"
     name = "sonuc-olarak-kapanis"
-    description = "Kapanis paragrafinin 'Sonuc olarak,', 'Ozetle,' gibi basmakalip baglacla acilmasi."
+    description = (
+        "Kapanis paragrafinin 'Sonuc olarak,', 'Ozetle,' gibi basmakalip baglacla acilmasi."
+    )
     severity = Severity.INFO
     suggestion = "Basmakalip baglac yerine kapanis dusuncesini dogrudan ana fikirle ifade edin."
 
@@ -227,7 +231,9 @@ class KapsamliSekildeRule(Rule):
     name = "kapsamli-sekilde"
     description = "'Kapsamlı bir şekilde' ('comprehensively') dolgu kalibi."
     severity = Severity.INFO
-    suggestion = "'...bir şekilde' yerine 'kapsamlica', 'ayrintilariyla' veya dogrudan yalin eylem kullanin."
+    suggestion = (
+        "'...bir şekilde' yerine 'kapsamlica', 'ayrintilariyla' veya dogrudan yalin eylem kullanin."
+    )
 
     _PATTERN = re.compile(
         r"\b(?:kapsamlı|detaylı|ayrıntılı)\s+bir\s+şekilde\b",

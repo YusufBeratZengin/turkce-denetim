@@ -12,72 +12,213 @@ from turkce_denetim.casing import turkish_casefold
 
 TURKISH_VOWELS = frozenset("aeıioöuü")
 
-# Ek gruplari sirali olarak denenir:
-# 1. Ek-fiil ve kisi ekleri (copula & person)
-# 2. Bilesik durum ve iyelik ekleri
-# 3. Yalin durum (ismin halleri) ekleri
-# 4. Yalin iyelik ekleri
-# 5. Cogul ekleri
-# 6. Yaygin turetim ekleri (-lik, -ci, -siz, -li)
-_SUFFIX_STAGES: list[list[str]] = [
-    # Asama 1: Ek-fiil ve kisi ekleri
+_SUFFIX_GROUPS: list[list[str]] = [
+    # 1. Uzun bilesik durum/iyelik/cogul ekleri
     [
-        "cesine", "casına",
-        "dirler", "dırlar", "dürler", "durlar", "tirler", "tırlar", "türler", "turlar",
-        "siniz", "sınız", "sünüz", "sunuz",
-        "yken", "ken",
-        "ymiş", "ymış", "ymüş", "ymuş", "miş", "mış", "müş", "muş",
-        "ydi", "ydı", "ydü", "ydu", "di", "dı", "dü", "du", "ti", "tı", "tü", "tu",
-        "yse", "ysa", "se", "sa",
-        "dir", "dır", "dür", "dur", "tir", "tır", "tür", "tur",
-        "sin", "sın", "sün", "sun",
-        "yım", "yim", "yüm", "yum", "ım", "im", "um", "üm",
-        "yız", "yiz", "yuz", "yüz", "ız", "iz", "uz", "üz",
+        "larımızdan",
+        "lerimizden",
+        "larımızda",
+        "lerimizde",
+        "larımızı",
+        "lerimizi",
+        "larımıza",
+        "lerimize",
+        "larımızın",
+        "lerimizin",
+        "lerinden",
+        "larından",
+        "lerinde",
+        "larında",
+        "lerine",
+        "larına",
+        "lerini",
+        "larını",
+        "lerden",
+        "lardan",
+        "lerde",
+        "larda",
+        "lerle",
+        "larla",
+        "lerin",
+        "ların",
+        "mızdan",
+        "mizden",
+        "muzdan",
+        "müzden",
+        "nızdan",
+        "nizden",
+        "nuzdan",
+        "nüzden",
+        "umuzdan",
+        "ümüzden",
+        "ımızdan",
+        "imizden",
+        "dılar",
+        "diler",
+        "dular",
+        "düler",
+        "tılar",
+        "tiler",
+        "dınız",
+        "diniz",
+        "tınız",
+        "tiniz",
+        "dık",
+        "dik",
+        "duk",
+        "dük",
+        "tık",
+        "tik",
+        "tuk",
+        "tük",
+        "dım",
+        "dim",
+        "dum",
+        "düm",
+        "tım",
+        "tim",
+        "tum",
+        "tüm",
+        "dın",
+        "din",
+        "dun",
+        "dün",
+        "tın",
+        "tin",
+        "tun",
+        "tün",
+        "madan",
+        "meden",
+        "maktan",
+        "mekten",
     ],
-    # Asama 2: Bilesik iyelik + durum ekleri (-lerinden, -imizden, -inde vb.)
+    # 2. Yalin durum ve cogul ekleri
     [
-        "larımızdan", "lerimizden", "larımızda", "lerimizde",
-        "larımızı", "lerimizi", "larımıza", "lerimize", "larımızın", "lerimizin",
-        "mızdan", "mizden", "muzdan", "müzden", "nızdan", "nizden", "nuzdan", "nüzden",
-        "umuzdan", "ümüzden", "ımızdan", "imizden",
-        "lerinden", "larından", "lerinde", "larında", "lerine", "larına", "lerini", "larını",
-        "inden", "ından", "ünden", "undan",
-        "inde", "ında", "ünde", "unda",
-        "ine", "ına", "üne", "una",
-        "ini", "ını", "ünü", "unu",
-        "inin", "ının", "ünün", "unun",
-        "ndan", "nden", "nda", "nde", "na", "ne", "nı", "ni", "nu", "nü",
+        "dan",
+        "den",
+        "tan",
+        "ten",
+        "da",
+        "de",
+        "ta",
+        "te",
+        "lar",
+        "ler",
+        "nın",
+        "nin",
+        "nun",
+        "nün",
+        "yla",
+        "yle",
+        "ya",
+        "ye",
+        "yı",
+        "yi",
+        "yu",
+        "yü",
+        "la",
+        "le",
+        "nde",
+        "nda",
+        "nden",
+        "ndan",
+        "ne",
+        "na",
+        "ni",
+        "nı",
     ],
-    # Asama 3: Yalin durum ekleri (Ablative, Locative, Dative, Accusative, Genitive, Instrumental)
+    # 3. Iyelik ve ek-fiil ekleri
     [
-        "dan", "den", "tan", "ten",
-        "da", "de", "ta", "te",
-        "nın", "nin", "nun", "nün",
-        "yla", "yle", "la", "le",
-        "ya", "ye",
-        "yı", "yi", "yu", "yü",
+        "larımız",
+        "lerimiz",
+        "ları",
+        "leri",
+        "ımız",
+        "imiz",
+        "umuz",
+        "ümüz",
+        "ınız",
+        "iniz",
+        "unuz",
+        "ünüz",
+        "mız",
+        "miz",
+        "muz",
+        "müz",
+        "nız",
+        "niz",
+        "nuz",
+        "nüz",
+        "sı",
+        "si",
+        "su",
+        "sü",
+        "iyor",
+        "ıyor",
+        "uyor",
+        "üyor",
+        "acak",
+        "ecek",
+        "malı",
+        "meli",
+        "mış",
+        "miş",
+        "muş",
+        "müş",
+        "dı",
+        "di",
+        "du",
+        "dü",
+        "tı",
+        "ti",
+        "tu",
+        "tü",
     ],
-    # Asama 4: Yalin iyelik ekleri
+    # 4. Yapim ve mastar ekleri
     [
-        "larımız", "lerimiz",
-        "ımız", "imiz", "umuz", "ümüz",
-        "ınız", "iniz", "unuz", "ünüz",
-        "mız", "miz", "muz", "müz",
-        "nız", "niz", "nuz", "nüz",
-        "ları", "leri",
-        "sı", "si", "su", "sü",
+        "mak",
+        "mek",
+        "lık",
+        "lik",
+        "luk",
+        "lük",
+        "sız",
+        "siz",
+        "suz",
+        "süz",
+        "ıcı",
+        "ici",
+        "ucu",
+        "ücü",
+        "lı",
+        "li",
+        "lu",
+        "lü",
+        "cı",
+        "ci",
+        "cu",
+        "cü",
+        "çı",
+        "çi",
+        "çu",
+        "çü",
     ],
-    # Asama 5: Cogul eki
+    # 5. Kisa ekler (en son denenmeli)
     [
-        "lar", "ler",
-    ],
-    # Asama 6: Yaygin isimden isim yapim ve fiil mastar ekleri
-    [
-        "mak", "mek",
-        "lık", "lik", "luk", "lük",
-        "sız", "siz", "suz", "süz",
-        "lı", "li", "lu", "lü",
-        "cı", "ci", "cu", "cü", "çı", "çi", "çu", "çü",
+        "ar",
+        "er",
+        "ım",
+        "im",
+        "um",
+        "üm",
+        "ın",
+        "in",
+        "un",
+        "ün",
+        "ı",
+        "i",
+        "u",
+        "ü",
     ],
 ]
 
@@ -112,18 +253,20 @@ def stem(word: str) -> str:
         return token
 
     current = token
-    for stage in _SUFFIX_STAGES:
-        matched_suffix: str | None = None
-        for s in stage:
-            if current.endswith(s):
-                candidate = current[: -len(s)]
-                # Kalan kok en az 2 harfli olmali ve en az 1 sesli harf icermeli
-                if len(candidate) >= 2 and _has_vowel(candidate):
-                    matched_suffix = s
-                    current = candidate
-                    break
-        if matched_suffix is not None:
-            continue
+    for _ in range(3):
+        matched = False
+        for group in _SUFFIX_GROUPS:
+            for s in group:
+                if current.endswith(s):
+                    candidate = current[: -len(s)]
+                    if len(candidate) >= 2 and _has_vowel(candidate):
+                        current = candidate
+                        matched = True
+                        break
+            if matched:
+                break
+        if not matched:
+            break
 
     return current
 

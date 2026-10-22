@@ -7,11 +7,36 @@ import re
 from turkce_denetim.models import Document, Paragraph, Sentence
 
 # Turkcede sik kullanilan ve cumle sonu sayilmamasi gereken kisaltmalar
-_ABBREVIATIONS = frozenset([
-    "vb", "bkz", "örn", "dr", "prof", "doç", "av", "vs", "vd",
-    "cad", "sok", "mah", "no", "mad", "sf", "s", "m.ö", "m.s",
-    "tc", "yy", "cm", "mm", "km", "kg", "gr", "lt",
-])
+_ABBREVIATIONS = frozenset(
+    [
+        "vb",
+        "bkz",
+        "örn",
+        "dr",
+        "prof",
+        "doç",
+        "av",
+        "vs",
+        "vd",
+        "cad",
+        "sok",
+        "mah",
+        "no",
+        "mad",
+        "sf",
+        "s",
+        "m.ö",
+        "m.s",
+        "tc",
+        "yy",
+        "cm",
+        "mm",
+        "km",
+        "kg",
+        "gr",
+        "lt",
+    ]
+)
 
 # Markdown bloklari ve inline kod kaliplari
 _FENCE_START_RE = re.compile(r"^[ \t]*(?:```|~~~)")
@@ -27,6 +52,7 @@ def mask_markdown_code(content: str) -> str:
     Boylece satir ve sutun numaralari tam olarak korunur, ancak kural motoru
     kod icindeki metinleri denetlemez.
     """
+
     # Once HTML yorumlarini ayni uzunlukta boslukla maskele
     def _mask_comment(match: re.Match[str]) -> str:
         s = match.group(0)
