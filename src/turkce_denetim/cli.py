@@ -1,4 +1,4 @@
-"""Komut satiri arayuzu (CLI)."""
+"""Komut satırı arayüzü (CLI)."""
 
 from __future__ import annotations
 

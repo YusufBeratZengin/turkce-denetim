@@ -1,4 +1,4 @@
-"""Yapilandirma modeli ve pyproject.toml / ozel dosya yukleyicisi."""
+"""Yapılandırma modeli ve pyproject.toml / özel dosya yükleyicisi."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from turkce_denetim.models import Severity
 
 @dataclass
 class Config:
-    """turkce-denetim calisma yapilandirmasi."""
+    """turkce-denetim çalışma yapılandırması."""
 
     min_severity: Severity = Severity.INFO
     disable: list[str] = field(default_factory=list)
@@ -22,9 +22,14 @@ class Config:
     max_commas_per_sentence: int = 5
     min_word_repetition: int = 3
 
+    def __post_init__(self) -> None:
+        # Kutuphane kullanicisi Config(min_severity="warn") yazabilir; metni Severity'ye cevir.
+        if not isinstance(self.min_severity, Severity):
+            self.min_severity = Severity.from_str(str(self.min_severity))
+
 
 def _parse_simple_toml_table(content: str, table_name: str) -> dict[str, Any]:
-    """Python 3.10 icin stdlib harici bagimlilik olmadan basit toml tablosu ayristirici."""
+    """Python 3.10 için stdlib harici bağımlılık olmadan basit toml tablosu ayrıştırıcı."""
     data: dict[str, Any] = {}
     lines = content.splitlines()
     in_target = False
@@ -72,7 +77,7 @@ def _parse_simple_toml_table(content: str, table_name: str) -> dict[str, Any]:
 
 
 def load_config_from_file(config_path: Path | str) -> Config:
-    """Belirtilen TOML dosyasindan [tool.turkce-denetim] ayarlarini yukler."""
+    """Belirtilen TOML dosyasından [tool.turkce-denetim] ayarlarını yükler."""
     p = Path(config_path)
     if not p.is_file():
         return Config()
@@ -118,7 +123,7 @@ def load_config_from_file(config_path: Path | str) -> Config:
 
 
 def find_and_load_config(start_dir: Path | str | None = None) -> Config:
-    """Calisma dizininden baslayarak pyproject.toml dosyasini arar ve yapilandirmayi yukler."""
+    """Çalışma dizininden başlayarak pyproject.toml dosyasını arar ve yapılandırmayı yükler."""
     current = Path(start_dir or Path.cwd()).resolve()
 
     # Mevcut veya ust dizinlerde pyproject.toml ara

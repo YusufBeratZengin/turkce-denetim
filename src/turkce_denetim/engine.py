@@ -1,4 +1,4 @@
-"""Denetim motoru (Linter Engine) ve dosya tarayici."""
+"""Denetim motoru (Linter Engine) ve dosya tarayıcı."""
 
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ _VALID_EXTENSIONS = frozenset([".md", ".txt", ".markdown"])
 
 
 def run_linter(document: Document, rules: list[Rule]) -> AnalysisResult:
-    """Tek bir belge uzerinde belirtilen kurallari calistirir ve bulgulari dondurur."""
+    """Tek bir belge üzerinde belirtilen kuralları çalıştırır ve bulguları döndürür."""
     all_findings: list[Finding] = []
 
     for rule in rules:
@@ -62,7 +62,7 @@ def run_linter(document: Document, rules: list[Rule]) -> AnalysisResult:
 
 
 def collect_target_files(targets: list[str | Path]) -> list[Path]:
-    """Verilen dosya ve dizin hedeflerinden .md ve .txt dosyalarini toplar."""
+    """Verilen dosya ve dizin hedeflerinden .md ve .txt dosyalarını toplar."""
     collected: list[Path] = []
     seen: set[Path] = set()
 
@@ -77,8 +77,9 @@ def collect_target_files(targets: list[str | Path]) -> list[Path]:
                 seen.add(p)
         elif p.is_dir():
             for item in p.rglob("*"):
-                # Dislanan dizinleri atla
-                if any(part in _EXCLUDED_DIRS for part in item.parts):
+                # Dislanan dizinleri atla (yalniz hedefin altindaki yola bakilir; hedefin
+                # ust dizini 'build' gibi adlar tasiyabilir)
+                if any(part in _EXCLUDED_DIRS for part in item.relative_to(p).parts):
                     continue
                 if item.is_file() and item.suffix.lower() in _VALID_EXTENSIONS:
                     if item not in seen:
@@ -90,7 +91,7 @@ def collect_target_files(targets: list[str | Path]) -> list[Path]:
 
 
 def analyze_paths(paths: list[Path], config: Config) -> list[AnalysisResult]:
-    """Belirtilen dosyalari yapilandirma kurallarina gore denetler."""
+    """Belirtilen dosyaları yapılandırma kurallarına göre denetler."""
     rules = create_rules(
         disabled=config.disable,
         min_severity=config.min_severity,
@@ -106,7 +107,8 @@ def analyze_paths(paths: list[Path], config: Config) -> list[AnalysisResult]:
             content = file_path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             try:
-                content = file_path.read_text(encoding="latin-1")
+                # Eski Turkce metin dosyalari genellikle Windows-1254'tur (latin-1 degil)
+                content = file_path.read_text(encoding="cp1254", errors="replace")
             except Exception:
                 continue
         except Exception:
@@ -120,7 +122,7 @@ def analyze_paths(paths: list[Path], config: Config) -> list[AnalysisResult]:
 
 
 def analyze_text(text: str, config: Config, path: str | None = None) -> AnalysisResult:
-    """Dizge icerigini (orn: stdin) yapilandirma kurallarina gore denetler."""
+    """Dizge içeriğini (orn: stdin) yapılandırma kurallarına göre denetler."""
     rules = create_rules(
         disabled=config.disable,
         min_severity=config.min_severity,
