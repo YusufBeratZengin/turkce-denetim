@@ -78,6 +78,9 @@ turkce-denetim document.md --min-severity warn
 
 # Print only the naturalness score (0-100)
 turkce-denetim document.md --score-only
+
+# List all available rules
+turkce-denetim --list-rules
 ```
 
 ### CLI Options
@@ -91,6 +94,7 @@ turkce-denetim document.md --score-only
 | `-c, --config` | Path | None | Path to custom TOML configuration file. |
 | `--no-color` | Flag | False | Disable ANSI color codes in terminal output. |
 | `--score-only` | Flag | False | Print only the numerical naturalness score. |
+| `--list-rules` | Flag | False | List all available linting rules (ID, name, severity, description). |
 | `-v, --version` | Flag | | Show program version. |
 
 ### Exit Codes

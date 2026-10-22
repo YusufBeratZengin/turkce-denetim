@@ -7,7 +7,7 @@ import sys
 from collections.abc import Sequence
 
 from turkce_denetim import __version__
-from turkce_denetim.config import find_and_load_config, load_config_from_file
+from turkce_denetim.config import ConfigError, find_and_load_config, load_config_from_file
 from turkce_denetim.engine import analyze_paths, analyze_text, collect_target_files
 from turkce_denetim.formatters import format_json, format_sarif, format_text
 from turkce_denetim.models import AnalysisResult, Severity
@@ -58,6 +58,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Yalnızca hesaplanan doğallık puanını yazdır",
     )
     parser.add_argument(
+        "--list-rules",
+        action="store_true",
+        help="Mevcut tüm kuralları listele (kimlik, ad, önem ve açıklama)",
+    )
+    parser.add_argument(
         "-v",
         "--version",
         action="version",
@@ -70,15 +75,39 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
+    if args.list_rules:
+        from turkce_denetim.rules.registry import ALL_RULES
+
+        for rule_cls in ALL_RULES:
+            rule = rule_cls()
+            sys.stdout.write(
+                f"{rule.id:<7} {rule.name:<25} {rule.severity.value:<7} {rule.description}\n"
+            )
+        return 0
+
     # 1. Yapilandirmayi yukle
-    if args.config:
-        config = load_config_from_file(args.config)
-    else:
-        config = find_and_load_config()
+    try:
+        if args.config:
+            config = load_config_from_file(args.config)
+        else:
+            config = find_and_load_config()
+    except ConfigError as err:
+        sys.stderr.write(f"Yapılandırma hatası: {err}\n")
+        return 2
+    except Exception as err:
+        sys.stderr.write(f"Yapılandırma hatası: {err}\n")
+        return 2
 
     # CLI argumanlariyla yapilandirmayi gecersiz kil (override)
     if args.disable:
+        from turkce_denetim.rules.registry import ALL_RULES
+
+        valid_rule_ids = {r.id for r in ALL_RULES}
         cli_disabled = [x.strip().upper() for x in args.disable.split(",") if x.strip()]
+        for rid in cli_disabled:
+            if rid not in valid_rule_ids:
+                sys.stderr.write(f"Yapılandırma hatası: Bilinmeyen kural kimliği: '{rid}'\n")
+                return 2
         config.disable = list(set(config.disable + cli_disabled))
 
     if args.min_severity:

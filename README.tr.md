@@ -78,6 +78,9 @@ turkce-denetim metin.md --min-severity warn
 
 # Sadece doğallık puanını yazdır
 turkce-denetim metin.md --score-only
+
+# Mevcut tüm kuralları listele
+turkce-denetim --list-rules
 ```
 
 ### CLI Seçenekleri
@@ -91,6 +94,7 @@ turkce-denetim metin.md --score-only
 | `-c, --config` | Yol | Yok | Kendi TOML yapılandırma dosyanın yolu. |
 | `--no-color` | Bayrak | False | Terminal renklerini kapatır. |
 | `--score-only` | Bayrak | False | Yalnızca doğallık puanını yazar. |
+| `--list-rules` | Bayrak | False | Mevcut tüm kuralları listeler (kimlik, ad, önem ve açıklama). |
 | `-v, --version` | Bayrak | | Sürümü yazar. |
 
 ### Çıkış Kodları (Exit Codes)

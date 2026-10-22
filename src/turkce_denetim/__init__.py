@@ -8,7 +8,7 @@ from turkce_denetim.casing import (
     turkish_title,
     turkish_upper,
 )
-from turkce_denetim.config import Config
+from turkce_denetim.config import Config, ConfigError
 from turkce_denetim.document import parse_document
 from turkce_denetim.engine import analyze_paths, analyze_text, run_linter
 from turkce_denetim.models import AnalysisResult, Document, Finding, Paragraph, Sentence, Severity
@@ -32,6 +32,7 @@ __all__ = [
     "Severity",
     "AnalysisResult",
     "Config",
+    "ConfigError",
     "parse_document",
     "run_linter",
     "analyze_text",

@@ -127,3 +127,74 @@ def test_cli_fixtures() -> None:
 
     # dirty.md has error-level findings and must exit with 1
     assert main([str(dirty_path), "--no-color"]) == 1
+
+
+def test_cli_list_rules(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = main(["--list-rules"])
+    assert exit_code == 0
+    captured = capsys.readouterr()
+    assert "TD001" in captured.out
+    assert "ile-birlikte-asiri" in captured.out
+    assert "TD025" in captured.out
+    lines = [ln for ln in captured.out.strip().splitlines() if ln.startswith("TD")]
+    assert len(lines) == 25
+
+
+def test_cli_malformed_config_unknown_key(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    cfg = tmp_path / "bad.toml"
+    cfg.write_text('[tool.turkce-denetim]\nunknown_key = "invalid"\n', encoding="utf-8")
+
+    exit_code = main(["--config", str(cfg)])
+    assert exit_code == 2
+    captured = capsys.readouterr()
+    assert "Yapılandırma hatası" in captured.err
+    assert "unknown_key" in captured.err
+    assert "Traceback" not in captured.err
+
+
+def test_cli_malformed_config_wrong_type(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    cfg = tmp_path / "bad_type.toml"
+    cfg.write_text('[tool.turkce-denetim]\nmax_sentence_words = "thirty"\n', encoding="utf-8")
+
+    exit_code = main(["--config", str(cfg)])
+    assert exit_code == 2
+    captured = capsys.readouterr()
+    assert "Yapılandırma hatası" in captured.err
+    assert "tam sayı" in captured.err
+    assert "Traceback" not in captured.err
+
+
+def test_cli_malformed_config_unknown_rule_id_in_disable(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    cfg = tmp_path / "bad_rule.toml"
+    cfg.write_text('[tool.turkce-denetim]\ndisable = ["TD999"]\n', encoding="utf-8")
+
+    exit_code = main(["--config", str(cfg)])
+    assert exit_code == 2
+    captured = capsys.readouterr()
+    assert "Yapılandırma hatası" in captured.err
+    assert "TD999" in captured.err
+    assert "Traceback" not in captured.err
+
+
+def test_cli_unknown_rule_id_in_cli_disable(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = main(["--disable", "TD999"])
+    assert exit_code == 2
+    captured = capsys.readouterr()
+    assert "Yapılandırma hatası" in captured.err
+    assert "TD999" in captured.err
+    assert "Traceback" not in captured.err
+
+
+def test_cli_missing_config_file(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = main(["--config", "non_existent_path_xyz.toml"])
+    assert exit_code == 2
+    captured = capsys.readouterr()
+    assert "Yapılandırma hatası" in captured.err
+    assert "bulunamadı" in captured.err
+    assert "Traceback" not in captured.err
