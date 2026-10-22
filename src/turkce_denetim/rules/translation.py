@@ -1,4 +1,4 @@
-"""Ceviri kokusu kaliplarini tespit eden kurallar (TD001 - TD007)."""
+"""Çeviri kokusu kalıplarını tespit eden kurallar (TD001 - TD007)."""
 
 from __future__ import annotations
 
@@ -11,28 +11,41 @@ from turkce_denetim.rules.base import Rule
 
 
 class IleBirlikteAsiriRule(Rule):
-    """TD001: '...ile birlikte' kalibinin asiri/gereksiz kullanimi."""
+    """TD001: '...ile birlikte' kalıbının aşırı/gereksiz kullanımı."""
 
     id = "TD001"
-    name = "ile-birlikte-asiri"
-    description = "'...ile birlikte' dolgu kalibi ('along with' cevirisi)."
-    severity = Severity.WARN
-    suggestion = "'ile birlikte' yerine 'ile', 'bunun yaninda', 'ayrica' veya yalin ek kullanin."
+    name = "ile-birlikte-aşırı"
+    description = "'...ile birlikte' dolgu kalıbı ('along with' çevirisi)."
+    severity = Severity.INFO
+    suggestion = "'ile birlikte' yerine 'ile', 'bunun yanında', 'ayrica' veya yalın ek kullanın."
 
-    _PATTERN = re.compile(
-        r"\b(?:[a-zçğıöşü]+(?:ile|'le|'la|le|la)|bununla|şununla|onunla)\s+birlikte\b",
-        re.IGNORECASE,
-    )
+    # Yalnizca ayri yazilan 'ile birlikte' taranir. 'Bununla birlikte', 'arkadaslarimla birlikte'
+    # ve 'Ayse ile birlikte' dogal Turkcedir.
+    _PATTERN = re.compile(r"\b([^\W\d_]+)\s+ile\s+birlikte\b", re.IGNORECASE)
+
+    _PRONOUNS = frozenset(["ben", "sen", "o", "biz", "siz", "onlar", "bu", "şu", "bunlar"])
+    _ABSTRACT_ENDINGS = ("ler", "lar", "lik", "lık", "luk", "lük", "me", "ma", "mesi", "ması", "ış", "iş", "uş", "üş")
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []
         for match in self._PATTERN.finditer(document.clean_content):
+            previous = match.group(1)
+            folded = turkish_casefold(previous)
+            if folded in self._PRONOUNS:
+                continue
+            if previous[0].isupper():
+                # Cumle ortasinda buyuk harf ozel addir ('Ayse ile birlikte'). Cumle basinda ise
+                # yalniz soyut ad eki tasiyan sozcukler ('Gelismeler ile birlikte') yakalanir.
+                before = document.clean_content[: match.start()].rstrip()
+                at_sentence_start = not before or before[-1] in ".!?…:"
+                if not (at_sentence_start and folded.endswith(self._ABSTRACT_ENDINGS)):
+                    continue
             matched_text = match.group(0)
             start_l, start_c = offset_to_line_col(document.clean_content, match.start())
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{matched_text}' kalibi ceviri kokusu tasiyabilir; daha yalin baglaclar tercih edilebilir.",
+                    message=f"'{matched_text}' kalıbı çeviri kokusu taşıyabilir; daha yalın bağlaçlar tercih edilebilir.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -48,24 +61,27 @@ class BuNoktadaRule(Rule):
 
     id = "TD002"
     name = "bu-noktada"
-    description = "'Bu noktada' dolgu ifadesi ('at this point' kalip cevirisi)."
-    severity = Severity.WARN
-    suggestion = "'Bu noktada' yerine 'burada', 'bu asamada' veya dogrudan konuya giren bir ifade tercih edin."
+    description = "'Bu noktada' dolgu ifadesi ('at this point' kalıp çevirisi)."
+    severity = Severity.INFO
+    suggestion = "'Bu noktada' yerine 'burada', 'bu aşamada' veya doğrudan konuya giren bir ifade tercih edin."
 
-    _PATTERN = re.compile(r"\bbu\s+noktada\b", re.IGNORECASE)
+    # Yalnizca cumle basindaki 'Bu noktada' soylem dolgusudur; 'geldigimiz bu noktada'
+    # gibi cumle ortasi kullanimlar dogaldir.
+    _PATTERN = re.compile(r"^bu\s+noktada\b", re.IGNORECASE)
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []
-        for match in self._PATTERN.finditer(document.clean_content):
-            start_l, start_c = offset_to_line_col(document.clean_content, match.start())
-            end_l, end_c = offset_to_line_col(document.clean_content, match.end())
+        for sentence in document.sentences:
+            match = self._PATTERN.search(sentence.text)
+            if not match:
+                continue
             findings.append(
                 self.create_finding(
-                    message="'Bu noktada' dolgu ifadesi tespit edildi.",
-                    line=start_l,
-                    column=start_c,
-                    end_line=end_l,
-                    end_column=end_c,
+                    message="Cümle başında 'Bu noktada' dolgu ifadesi tespit edildi.",
+                    line=sentence.line,
+                    column=sentence.column,
+                    end_line=sentence.line,
+                    end_column=sentence.column + len(match.group(0)),
                     context=match.group(0),
                 )
             )
@@ -73,30 +89,38 @@ class BuNoktadaRule(Rule):
 
 
 class GununSonundaRule(Rule):
-    """TD003: 'günün sonunda' basmakalip cevirisi."""
+    """TD003: 'günün sonunda' basmakalıp çevirisi."""
 
     id = "TD003"
-    name = "gunun-sonunda"
-    description = "'Günün sonunda' basmakalip deyimi ('at the end of the day' cevirisi)."
+    name = "günün-sonunda"
+    description = "'Günün sonunda' basmakalıp deyimi ('at the end of the day' çevirisi)."
     severity = Severity.WARN
     suggestion = (
-        "'Günün sonunda' yerine 'sonucta', 'eninde sonunda', 'nihayetinde' veya 'ozunde' kullanin."
+        "'Günün sonunda' yerine 'sonuçta', 'eninde sonunda', 'nihayetinde' veya 'özünde' kullanın."
     )
 
-    _PATTERN = re.compile(r"\bgünün\s+sonunda\b", re.IGNORECASE)
+    # Soylem isareti olarak kullanilan 'Gunun sonunda, ...' yakalanir. 'Gunun sonunda eve
+    # dondum' gibi gercek zaman bildiren kullanim dogaldir; yalnizca virgul ya da genel yargi
+    # oznesi (herkes, her sey, onemli olan...) izleyen cumle basi kullanimlar taranir.
+    _PATTERN = re.compile(
+        r"^günün\s+sonunda(?=,|\s+(?:herkes|her\s+şey|hiç|önemli|asıl|mesele|tüm|bütün|"
+        r"hepimiz|insan|kimse|sonuç)\b)",
+        re.IGNORECASE,
+    )
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []
-        for match in self._PATTERN.finditer(document.clean_content):
-            start_l, start_c = offset_to_line_col(document.clean_content, match.start())
-            end_l, end_c = offset_to_line_col(document.clean_content, match.end())
+        for sentence in document.sentences:
+            match = self._PATTERN.search(sentence.text)
+            if not match:
+                continue
             findings.append(
                 self.create_finding(
-                    message="'Günün sonunda' ifadesi birebir Ingilizce ceviridir ('at the end of the day').",
-                    line=start_l,
-                    column=start_c,
-                    end_line=end_l,
-                    end_column=end_c,
+                    message="'Günün sonunda' ifadesi birebir İngilizce çeviridir ('at the end of the day').",
+                    line=sentence.line,
+                    column=sentence.column,
+                    end_line=sentence.line,
+                    end_column=sentence.column + len(match.group(0)),
                     context=match.group(0),
                 )
             )
@@ -104,15 +128,15 @@ class GununSonundaRule(Rule):
 
 
 class OnemlidirKiRule(Rule):
-    """TD004: '...önemlidir ki' kalibi."""
+    """TD004: '...önemlidir ki' kalıbı."""
 
     id = "TD004"
-    name = "onemlidir-ki"
+    name = "önemlidir-ki"
     description = (
-        "'...önemlidir ki' veya 'şunu belirtmek önemlidir ki' cevirisi ('it is important that')."
+        "'...önemlidir ki' veya 'şunu belirtmek önemlidir ki' çevirisi ('it is important that')."
     )
     severity = Severity.WARN
-    suggestion = "'...önemlidir ki' yerine '...belirtmek gerekir', '...onem tasir' veya dogrudan yargi cumlesi kurun."
+    suggestion = "'...önemlidir ki' yerine '...belirtmek gerekir', '...önem taşır' veya doğrudan yargı cümlesi kurun."
 
     _PATTERN = re.compile(
         r"\b(?:(?:şunu\s+)?(?:belirtmek|vurgulamak|hatırlatmak)\s+)?önemlidir\s+ki\b",
@@ -126,7 +150,7 @@ class OnemlidirKiRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{match.group(0)}' kalibi Ingilizce 'it is important that' cevirisidir.",
+                    message=f"'{match.group(0)}' kalıbı İngilizce 'it is important that' çevirisidir.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -138,16 +162,16 @@ class OnemlidirKiRule(Rule):
 
 
 class KonusundaYigilmasiRule(Rule):
-    """TD005: Bir cumlede '...konusunda' yigilmasi."""
+    """TD005: Bir cümlede '...konusunda' yığılması."""
 
     id = "TD005"
-    name = "konusunda-yigilmasi"
+    name = "konusunda-yığılması"
     description = (
-        "Ayni cumlede birden cok '...konusunda / konusundaki' yigilmasi ('regarding' cevirisi)."
+        "Aynı cümlede birden çok '...konusunda / konusundaki' yığılması ('regarding' çevirisi)."
     )
     severity = Severity.WARN
     suggestion = (
-        "'konusunda' yerine '-e dair', '-le ilgili' veya dogrudan yonelme/belirtme eki kullanin."
+        "'konusunda' yerine '-e dair', '-le ilgili' veya doğrudan yönelme/belirtme eki kullanın."
     )
 
     _PATTERN = re.compile(r"\bkonusunda(?:ki)?\b", re.IGNORECASE)
@@ -159,7 +183,7 @@ class KonusundaYigilmasiRule(Rule):
             if len(matches) >= 2:
                 findings.append(
                     self.create_finding(
-                        message=f"Cumle icinde 'konusunda' kalibi {len(matches)} kez tekrarlandi.",
+                        message=f"Cümle içinde 'konusunda' kalıbı {len(matches)} kez tekrarlandı.",
                         line=sentence.line,
                         column=sentence.column,
                         end_line=sentence.end_line,
@@ -171,21 +195,22 @@ class KonusundaYigilmasiRule(Rule):
 
 
 class SahipOlmakRule(Rule):
-    """TD006: Gereksiz 'sahip olmak' ('have' cevirisi)."""
+    """TD006: Gereksiz 'sahip olmak' ('have' çevirisi)."""
 
     id = "TD006"
     name = "sahip-olmak"
     description = (
-        "Iyelik eki yerine Ingilizce 'have' karsiligi kullanilan gereksiz 'sahip olmak' yapisi."
+        "İyelik eki yerine İngilizce 'have' karşılığı kullanılan gereksiz 'sahip olmak' yapısı."
     )
     severity = Severity.WARN
     suggestion = (
-        "'...sahiptir / sahip olmak' yerine '...vardir', '...bulunur' veya iyelik eki kullanin."
+        "'...sahiptir / sahip olmak' yerine '...vardır', '...bulunur' veya iyelik eki kullanın."
     )
 
-    # 'özelliklere sahiptir', 'hıza sahip bir telefon', 'sahip olmak'
+    # 'özelliklere sahiptir', 'hıza sahip bir telefon', 'özelliklere sahip olan'.
+    # 'Sahip olmak istediğim', 'sahip çıkmak' gibi doğal kullanımlar taranmaz.
     _PATTERN = re.compile(
-        r"\b(?:[a-zçğıöşü]+[ea]\s+sahip(?:tir|ti|tirler)?|sahip\s+(?:olmak|olduğu|olan|olması|olup|olurlar|olur|oldu|olacaktır))\b",
+        r"\b[a-zçğıöşü]+[ea]\s+sahip(?:tir|ti|tirler|\s+(?:bir|olan|olduğu|olarak))\b",
         re.IGNORECASE,
     )
 
@@ -209,7 +234,7 @@ class SahipOlmakRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{matched_text}' yapisi 'have' cevirisi kokusu tasiyor olabilir; iyelik eki ('...vardir') tercih edilebilir.",
+                    message=f"'{matched_text}' yapısı 'have' çevirisi kokusu taşıyor olabilir; iyelik eki ('...vardır') tercih edilebilir.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -221,48 +246,46 @@ class SahipOlmakRule(Rule):
 
 
 class EdilgenYigilmasiRule(Rule):
-    """TD007: Cumlede asiri edilgen cati yogunlugu."""
+    """TD007: Cümlede aşırı edilgen çatı yoğunluğu."""
 
     id = "TD007"
-    name = "edilgen-yigilmasi"
+    name = "edilgen-yığılması"
     description = (
-        "Tek bir cumlede 3 veya daha fazla edilgen eylem bulunmasi (edilgen cati yigilmasi)."
+        "Tek bir cümlede 3 veya daha fazla edilgen eylem bulunması (edilgen çatı yığılması)."
     )
     severity = Severity.WARN
-    suggestion = "Edilgen fiilleri etken catiya donusturerek cumlenin oznesini belirginlestirin."
+    suggestion = "Edilgen fiilleri etken çatıya dönüştürerek cümlenin öznesini belirginleştirin."
 
+    # Gerçek edilgen gövdesi: -Il / -n / -lAn edilgenlik eki + zaman eki. Tek harflik köklü
+    # '-il' ('bildi', 'gülüyor', 'sunuyor') etken fiillerle karışır, bu yüzden en az iki harflik
+    # kök istenir; l ile biten kökte -n eki ('alındı', 'bulundu') ayrıca ve -lAn eki
+    # ('onaylandı') ayrıca denetlenir.
+    _TENSE = (
+        r"(?:makta|mekte|maktadır|mektedir|mıştır|miştir|muştur|müştür|mış|miş|muş|müş|"
+        r"dı|di|du|dü|tı|ti|tu|tü|acak|ecek|ıyor|iyor|uyor|üyor)(?:dır|dir|dur|dür|lar|ler)?"
+    )
     _PASSIVE_RE = re.compile(
-        r"\b[a-zçğıöşü]+(?:ıl|il|ul|ül|ın|in|un|ün|lan|len)(?:makta|mekte|maktadır|mektedir|mıştır|miştir|muştur|müştür|mış|miş|muş|müş|dı|di|du|dü|tı|ti|tu|tü|acak|ecek|ıyor|iyor|uyor|üyor)(?:dır|dir|dur|dür|lar|ler)?\b",
+        rf"\b(?:[a-zçğıöşü]{{2,}}(?:ıl|il|ul|ül|lan|len)|[a-zçğıöşü]+(?:lın|lin|lun|lün)){_TENSE}\b",
         re.IGNORECASE,
     )
 
-    _NOUN_EXCLUSIONS = frozenset(
-        [
-            "toplantı",
-            "ayrıntı",
-            "bağlantı",
-            "sıkıntı",
-            "yaşantı",
-            "görüntü",
-            "akıntı",
-            "özentü",
-            "sızıntı",
-            "gezinti",
-            "çıkıntı",
-            "kalıntı",
-        ]
-    )
+    # '-lan' ile biten ama edilgen olmayan temel fiiller ('kullandı', 'kullanıyor').
+    _ACTIVE_PREFIXES = ("kullan", "uygulan", "yaslan", "dolan", "bulan", "kızılan")
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []
         for sentence in document.sentences:
             lower_sent = turkish_casefold(sentence.text)
             matches = self._PASSIVE_RE.findall(lower_sent)
-            filtered = [m for m in matches if m not in self._NOUN_EXCLUSIONS]
+            filtered = [
+                m
+                for m in matches
+                if not (m.startswith(self._ACTIVE_PREFIXES) and "ıl" not in m[6:])
+            ]
             if len(filtered) >= 3:
                 findings.append(
                     self.create_finding(
-                        message=f"Cumlede {len(filtered)} edilgen fiil yigilmasi tespit edildi ({', '.join(filtered)}).",
+                        message=f"Cümlede {len(filtered)} edilgen fiil yığılması tespit edildi ({', '.join(filtered)}).",
                         line=sentence.line,
                         column=sentence.column,
                         end_line=sentence.end_line,

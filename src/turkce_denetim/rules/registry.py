@@ -1,4 +1,4 @@
-"""Kural kayit defteri ve secim mekanizmasi."""
+"""Kural kayıt defteri ve seçim mekanizması."""
 
 from __future__ import annotations
 
@@ -52,7 +52,7 @@ ALL_RULES: list[type[Rule]] = [
     KonusundaYigilmasiRule,
     SahipOlmakRule,
     EdilgenYigilmasiRule,
-    # Yapay zeka kaliplari (TD008 - TD016)
+    # Yapay zekâ kaliplari (TD008 - TD016)
     ElbetteAcilisRule,
     HarikaSoruRule,
     SonucOlarakKapanisRule,
@@ -79,7 +79,7 @@ RULE_MAP: dict[str, type[Rule]] = {cls.id: cls for cls in ALL_RULES}
 
 
 def get_rule_by_id(rule_id: str) -> type[Rule] | None:
-    """Kural kimligine (orn: TD001) gore kural sinifini getirir."""
+    """Kural kimliğine (orn: TD001) göre kural sınıfını getirir."""
     return RULE_MAP.get(rule_id.upper())
 
 
@@ -91,7 +91,7 @@ def create_rules(
     max_commas: int = 5,
     min_word_repetition: int = 3,
 ) -> list[Rule]:
-    """Yapilandirmaya gore aktif kural nesnelerini olusturur."""
+    """Yapılandırmaya göre aktif kural nesnelerini oluşturur."""
     disabled_set = {d.strip().upper() for d in disabled} if disabled else set()
     active_rules: list[Rule] = []
 

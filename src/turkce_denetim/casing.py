@@ -1,4 +1,4 @@
-"""Turkce buyuk/kucuk harf donusumleri (I/ı, İ/i) ve casefold yardimcilari."""
+"""Türkçe büyük/küçük harf dönüşümleri (I/ı, İ/i) ve casefold yardımcıları."""
 
 from __future__ import annotations
 
@@ -17,10 +17,10 @@ _UPPER_MAP = {
 
 
 def turkish_lower(text: str) -> str:
-    """Turkce kurallarina uygun kucuk harfe donusturme.
+    """Türkçe kurallarına uygun küçük harfe dönüştürme.
 
     'I' harfini 'ı' yapar, 'İ' harfini 'i' yapar. Standart str.lower() 'I' harfini
-    'i' yaptigi icin Turkcede hatali karsilastirmalara yol acar.
+    'i' yaptığı için Türkçede hatalı karşılaştırmalara yol acar.
     """
     normalized = unicodedata.normalize("NFC", text)
     # Translate I and İ first
@@ -29,7 +29,7 @@ def turkish_lower(text: str) -> str:
 
 
 def turkish_upper(text: str) -> str:
-    """Turkce kurallarina uygun buyuk harfe donusturme.
+    """Türkçe kurallarına uygun büyük harfe dönüştürme.
 
     'ı' harfini 'I' yapar, 'i' harfini 'İ' yapar.
     """
@@ -39,9 +39,9 @@ def turkish_upper(text: str) -> str:
 
 
 def turkish_casefold(text: str) -> str:
-    """Turkce harf duyarsiz karsilastirma (casefold).
+    """Türkçe harf duyarsız karşılaştırma (casefold).
 
-    Turkce 'I'/'ı' ve 'İ'/'i' ayrimini koruyarak metni kucuk harfe ve casefold bicimine cevirir.
+    Türkçe 'I'/'ı' ve 'İ'/'i' ayrımını koruyarak metni küçük harfe ve casefold biçimine çevirir.
     """
     normalized = unicodedata.normalize("NFC", text)
     # Once Turkce buyuk I ve İ'yi kucuk karsiliklarina cevir
@@ -50,7 +50,7 @@ def turkish_casefold(text: str) -> str:
 
 
 def turkish_title(text: str) -> str:
-    """Turkce kurallarina uygun baslik duzeni (Title Case)."""
+    """Türkçe kurallarına uygun başlık düzeni (Title Case)."""
     words = text.split(" ")
     titled_words: list[str] = []
     for word in words:

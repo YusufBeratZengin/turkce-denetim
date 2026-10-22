@@ -1,4 +1,4 @@
-"""Belge yapilandirma, Markdown kod bloklarini maskeleme ve cumle/paragraf ayristirma."""
+"""Belge yapılandırma, Markdown kod bloklarını maskeleme ve cümle/paragraf ayrıştırma."""
 
 from __future__ import annotations
 
@@ -47,10 +47,10 @@ _WORD_TOKEN_RE = re.compile(r"[a-zçğıöşüA-ZÇĞİÖŞÜ0-9'’-]+")
 
 
 def mask_markdown_code(content: str) -> str:
-    """Markdown kod bloklarini ve satir ici kodlari boslukla maskeler.
+    """Markdown kod bloklarını ve satır içi kodları boşlukla maskeler.
 
-    Boylece satir ve sutun numaralari tam olarak korunur, ancak kural motoru
-    kod icindeki metinleri denetlemez.
+    Böylece satır ve sütun numaraları tam olarak korunur, ancak kural motoru
+    kod içindeki metinleri denetlemez.
     """
 
     # Once HTML yorumlarini ayni uzunlukta boslukla maskele
@@ -89,7 +89,7 @@ def mask_markdown_code(content: str) -> str:
 
 
 def offset_to_line_col(text: str, offset: int) -> tuple[int, int]:
-    """Metin icindeki karakter indeksini (satir, sutun) ikilisine cevirir (1-tabanli)."""
+    """Metin içindeki karakter indeksini (satır, sütun) ikilisine çevirir (1-tabanlı)."""
     offset = max(0, min(offset, len(text)))
     prefix = text[:offset]
     line = prefix.count("\n") + 1
@@ -101,7 +101,7 @@ def offset_to_line_col(text: str, offset: int) -> tuple[int, int]:
 def _split_into_sentences(
     paragraph_text: str, para_start_offset: int, full_doc: str
 ) -> list[Sentence]:
-    """Bir paragrafi Turkce kurallarina ve kisaltmalarina gore cumlelere ayirir."""
+    """Bir paragrafi Türkçe kurallarına ve kısaltmalarına göre cümlelere ayırır."""
     sentences: list[Sentence] = []
     text_len = len(paragraph_text)
     if text_len == 0:
@@ -187,14 +187,15 @@ def _split_into_sentences(
 
 
 def parse_document(content: str, path: str | None = None) -> Document:
-    """Ham metin icerigini ayrintili Document nesnesine cevirir."""
+    """Ham metin içeriğini ayrıntılı Document nesnesine çevirir."""
     clean_content = mask_markdown_code(content)
     raw_lines = content.split("\n")
     clean_lines = clean_content.split("\n")
 
     # Paragraflari ayir: 2 veya daha fazla ardisik \n
     # Konum takibi icin re.finditer kullan
-    para_pattern = re.compile(r"([^\n]+(?:\n[^\n]+)*)")
+    # Maskelenmis kod satirlari yalniz bosluk icerir; bunlar paragraf ayiricisi sayilir.
+    para_pattern = re.compile(r"([^\n]*\S[^\n]*(?:\n[^\n]*\S[^\n]*)*)")
     paragraphs: list[Paragraph] = []
     all_sentences: list[Sentence] = []
 

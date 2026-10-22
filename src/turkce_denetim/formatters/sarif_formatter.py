@@ -1,4 +1,4 @@
-"""SARIF 2.1.0 cikti bicimlendiricisi (GitHub code scanning ile tam uyumlu)."""
+"""SARIF 2.1.0 çıktı biçimlendiricisi (GitHub code scanning ile tam uyumlu)."""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ def _rule_to_sarif_descriptor(rule_cls: type[Any]) -> dict[str, Any]:
 
 
 def format_sarif(results: list[AnalysisResult], indent: int = 2) -> str:
-    """Denetim sonuclarini SARIF 2.1.0 standardina uygun JSON dizgisine cevirir."""
+    """Denetim sonuçlarını SARIF 2.1.0 standardına uygun JSON dizgisine çevirir."""
     # Kural fihristi
     rules_list = [_rule_to_sarif_descriptor(r) for r in ALL_RULES]
     rule_id_to_index = {r["id"]: idx for idx, r in enumerate(rules_list)}

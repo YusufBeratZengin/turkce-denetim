@@ -1,4 +1,4 @@
-"""Kural motoru temel sinif ve arayuzleri."""
+"""Kural motoru temel sınıf ve arayüzleri."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from turkce_denetim.models import Document, Finding, Severity
 
 
 class Rule(ABC):
-    """Tum denetim kurallarinin tureyecegi soyut temel sinif."""
+    """Tum denetim kurallarının türeyeceği soyut temel sınıf."""
 
     id: str
     name: str
@@ -26,7 +26,7 @@ class Rule(ABC):
         suggestion: str | None = None,
         context: str | None = None,
     ) -> Finding:
-        """Bulgu olusturma yardimcisi."""
+        """Bulgu oluşturma yardımcısı."""
         return Finding(
             rule_id=self.id,
             rule_name=self.name,
@@ -42,5 +42,5 @@ class Rule(ABC):
 
     @abstractmethod
     def check(self, document: Document) -> list[Finding]:
-        """Belgeyi denetler ve kural ihlallerini bulgu listesi olarak dondurur."""
+        """Belgeyi denetler ve kural ihlallerini bulgu listesi olarak döndürür."""
         pass

@@ -1,7 +1,7 @@
-"""Turkce basit ek budayici (stemmer / suffix stripper).
+"""Türkçe basit ek budayici (stemmer / suffix stripper).
 
-Kelime tekrarlarini ve benzer kaliplari tespit etmek icin yaygin Turkce cekim ve yapim eklerini
-kok duzeyine budar. Dis kutuphane bagimliligi yoktur.
+Kelime tekrarlarını ve benzer kalıpları tespit etmek için yaygın Türkçe cekim ve yapım eklerini
+kök düzeyine budar. Dis kütüphane bağımlılığı yoktur.
 """
 
 from __future__ import annotations
@@ -81,7 +81,7 @@ _SUFFIX_GROUPS: list[list[str]] = [
         "tüm",
         "dın",
         "din",
-        "dun",
+        "dün",
         "dün",
         "tın",
         "tin",
@@ -187,7 +187,7 @@ _SUFFIX_GROUPS: list[list[str]] = [
         "suz",
         "süz",
         "ıcı",
-        "ici",
+        "içi",
         "ucu",
         "ücü",
         "lı",
@@ -230,10 +230,10 @@ def _has_vowel(text: str) -> bool:
 
 
 def stem(word: str) -> str:
-    """Tek bir kelimenin eklerini kirparak yaklasik kok/govde dondurur.
+    """Tek bir kelimenin eklerini kırparak yaklaşık kök/gövde döndürür.
 
-    Ozel isim kesme isaretlerini ve cevreleyen noktalama isaretlerini temizler.
-    Kok boyutu 2 harften kisa olamaz ve icinde en az bir unlu harf bulunmalidir.
+    Özel isim kesme işaretlerini ve çevreleyen noktalama işaretlerini temizler.
+    Kök boyutu 2 harften kısa olamaz ve içinde en az bir unlu harf bulunmalıdır.
     """
     token = turkish_casefold(word.strip())
 
@@ -272,7 +272,7 @@ def stem(word: str) -> str:
 
 
 def stem_words(text: str) -> list[str]:
-    """Bir metindeki tum kelimeleri budar ve kucuk harfli kok listesi dondurur."""
+    """Bir metindeki tum sözcükleri budar ve küçük harfli kök listesi döndürür."""
     raw_words = re.findall(r"[a-zçğıöşüA-ZÇĞİÖŞÜ0-9'’-]+", text)
     stems: list[str] = []
     for w in raw_words:

@@ -1,4 +1,4 @@
-"""Insan okur metin bicimlendiricisi (ANSI renk destekli)."""
+"""Insan okur metin biçimlendiricisi (ANSI renk destekli)."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ def format_text(
     use_color: bool = True,
     show_summary: bool = True,
 ) -> str:
-    """Denetim sonuclarini standart linter formatinda metne cevirir."""
+    """Denetim sonuçlarını standart linter formatında metne çevirir."""
     lines: list[str] = []
     total_findings = 0
     total_words = 0
@@ -71,8 +71,8 @@ def format_text(
             lines.append("")
 
         lines.append(_colorize("--- Denetim Özeti ---", _BOLD, use_color))
-        lines.append(f"Taranan belge sayisi : {len(results)}")
-        lines.append(f"Toplam kelime sayisi : {total_words}")
+        lines.append(f"Taranan belge sayısı : {len(results)}")
+        lines.append(f"Toplam kelime sayısı : {total_words}")
 
         err_cnt = severity_counts[Severity.ERROR]
         warn_cnt = severity_counts[Severity.WARN]
@@ -88,7 +88,7 @@ def format_text(
 
         if rule_counts:
             breakdown = ", ".join(f"{k}: {v}" for k, v in sorted(rule_counts.items()))
-            lines.append(f"Kural dagilimi       : {breakdown}")
+            lines.append(f"Kural dağılımı       : {breakdown}")
 
         # Genel dogallik puani
         all_findings = [f for r in results for f in r.findings]

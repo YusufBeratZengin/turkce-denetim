@@ -1,4 +1,4 @@
-"""Yapay zeka metin kaliplarini tespit eden kurallar (TD008 - TD016)."""
+"""Yapay zekâ metin kalıplarını tespit eden kurallar (TD008 - TD016)."""
 
 from __future__ import annotations
 
@@ -11,18 +11,21 @@ from turkce_denetim.rules.base import Rule
 
 
 class ElbetteAcilisRule(Rule):
-    """TD008: 'Elbette!', 'Kesinlikle!' gibi dalkavukca yapay zeka acilislari."""
+    """TD008: 'Elbette!', 'Kesinlikle!' gibi dalkavukça yapay zekâ açılışları."""
 
     id = "TD008"
-    name = "elbette-acilis"
+    name = "elbette-açılış"
     description = (
-        "Metin veya yanit basindaki dalkavukca acilis unlemleri ('Elbette!', 'Kesinlikle!')."
+        "Metin veya yanıt başındaki dalkavukça açılış ünlemleri ('Elbette!', 'Kesinlikle!')."
     )
     severity = Severity.WARN
-    suggestion = "Dalkavukca acilis yerine dogrudan konuya veya bilgiye girin."
+    suggestion = "Dalkavukça açılış yerine doğrudan konuya veya bilgiye girin."
 
+    # Yalnızca ünlemli açılış ('Elbette!') ya da asistan kalıbı ('Elbette, size yardımcı
+    # olabilirim') yakalanır. 'Elbette, kapıyı ben açarım' ve 'Kesinlikle.' doğal yanıttır.
     _PATTERN = re.compile(
-        r"^(?:\s*)(?:elbette|kesinlikle|şüphesiz|tabii\s+ki)[!.,]",
+        r"^(?:\s*)(?:(?:elbette|kesinlikle|şüphesiz|tabii\s+ki)!|"
+        r"(?:elbette|tabii\s+ki),\s+(?:size\s+|sana\s+)?(?:yardımcı|hemen|memnuniyetle|işte)\b)",
         re.IGNORECASE,
     )
 
@@ -37,7 +40,7 @@ class ElbetteAcilisRule(Rule):
         if match:
             findings.append(
                 self.create_finding(
-                    message=f"Metin basinda dalkavukca yapay zeka acilisi tespit edildi ('{match.group(0).strip()}').",
+                    message=f"Metin başında dalkavukça yapay zekâ açılışı tespit edildi ('{match.group(0).strip()}').",
                     line=first_sentence.line,
                     column=first_sentence.column,
                     end_line=first_sentence.line,
@@ -49,16 +52,16 @@ class ElbetteAcilisRule(Rule):
 
 
 class HarikaSoruRule(Rule):
-    """TD009: 'Harika bir soru', 'Cok guzel bir soru' gibi yapay zeka iltifat kaliplari."""
+    """TD009: 'Harika bir soru', 'Çok güzel bir soru' gibi yapay zekâ iltifat kalıpları."""
 
     id = "TD009"
     name = "harika-soru"
-    description = "Yapay zeka ovgu/iltifat basmakaliplari ('Harika bir soru')."
+    description = "Yapay zekâ övgü/iltifat basmakalıpları ('Harika bir soru')."
     severity = Severity.WARN
-    suggestion = "Iltifat kalibini silerek dogrudan yanita baslayin."
+    suggestion = "İltifat kalıbını silerek doğrudan yanıta başlayın."
 
     _PATTERN = re.compile(
-        r"\b(?:harika|mükemmel|çok\s+güzel|yerinde)\s+bir\s+soru\b|\bharika\s+bir\s+konuya\s+değindin\b",
+        r"\b(?:harika|mükemmel|çok\s+güzel|yerinde)\s+bir\s+soru\b(?!-)|\bharika\s+bir\s+konuya\s+değindin\b",
         re.IGNORECASE,
     )
 
@@ -69,7 +72,7 @@ class HarikaSoruRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"Yapay zeka ovgu kalibi tespit edildi: '{match.group(0)}'.",
+                    message=f"Yapay zekâ övgü kalıbı tespit edildi: '{match.group(0)}'.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -81,18 +84,18 @@ class HarikaSoruRule(Rule):
 
 
 class SonucOlarakKapanisRule(Rule):
-    """TD010: Son paragrafin 'Sonuc olarak,' ile baslamasi klisesi."""
+    """TD010: Son paragrafın 'Sonuç olarak,' ile başlaması klişesi."""
 
     id = "TD010"
-    name = "sonuc-olarak-kapanis"
+    name = "sonuç-olarak-kapanış"
     description = (
-        "Kapanis paragrafinin 'Sonuc olarak,', 'Ozetle,' gibi basmakalip baglacla acilmasi."
+        "Kapanış paragrafının 'Sonuç olarak,', 'Özetle,' gibi basmakalıp bağlaçla açılması."
     )
     severity = Severity.INFO
-    suggestion = "Basmakalip baglac yerine kapanis dusuncesini dogrudan ana fikirle ifade edin."
+    suggestion = "Basmakalıp bağlaç yerine kapanış düşüncesini doğrudan ana fikirle ifade edin."
 
     _PATTERN = re.compile(
-        r"^(?:sonuç\s+olarak|özetle|özetlemek\s+gerekirse|toparlamak\s+gerekirse|kısacası)[,:]",
+        r"^(?:sonuç\s+olarak|özetle|özetlemek\s+gerekirse|toparlamak\s+gerekirse)[,:]",
         re.IGNORECASE,
     )
 
@@ -111,7 +114,7 @@ class SonucOlarakKapanisRule(Rule):
         if match:
             findings.append(
                 self.create_finding(
-                    message=f"Kapanis paragrafi basmakalip '{match.group(0)}' ile basliyor.",
+                    message=f"Kapanış paragrafi basmakalıp '{match.group(0)}' ile başlıyor.",
                     line=first_sent.line,
                     column=first_sent.column,
                     end_line=first_sent.line,
@@ -123,33 +126,55 @@ class SonucOlarakKapanisRule(Rule):
 
 
 class DunyasiMetaforuRule(Rule):
-    """TD011: '...dunyasi / dunyasinda' soyut metafor kalibi."""
+    """TD011: '...dünyası / dünyasında' soyut metafor kalıbı."""
 
     id = "TD011"
-    name = "dunyasi-metaforu"
-    description = "'...dünyasında' kalibi ('in the world of...' cevirisi)."
+    name = "dünyası-metaforu"
+    description = "'...dünyasında' kalıbı ('in the world of...' çevirisi)."
     severity = Severity.INFO
-    suggestion = "'...dünyasında' yerine dogrudan alan adini yonelme veya bulunma ile belirtin (orn: 'yazilimda')."
+    suggestion = "'...dünyasında' yerine doğrudan alan adını yönelme veya bulunma ile belirtin (orn: 'yazılımda')."
 
     _PATTERN = re.compile(
         r"\b([a-zçğıöşüâîû]+)\s+dünyasın(?:da|dan|a|ı|ın)\b|\bdijital\s+dünyada\b",
         re.IGNORECASE,
     )
 
-    _EXCLUDED = frozenset(["iş", "hayvanlar", "üçüncü", "yeraltı", "çocuk"])
+    # Yalnızca kliş haline gelmiş soyut alan adları taranır. 'Onun dünyasında', 'çocukların
+    # dünyasında', 'iş dünyasında', 'Harry Potter dünyasında' gibi kullanımlar doğaldır.
+    _DOMAINS = frozenset(
+        [
+            "yazılım",
+            "teknoloji",
+            "zekâ",
+            "zeka",
+            "dijital",
+            "girişim",
+            "girişimcilik",
+            "pazarlama",
+            "moda",
+            "finans",
+            "veri",
+            "kodlama",
+            "bilişim",
+            "siber",
+            "kripto",
+            "medya",
+            "e-ticaret",
+        ]
+    )
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []
         for match in self._PATTERN.finditer(document.clean_content):
             prefix = match.group(1)
-            if prefix and turkish_casefold(prefix) in self._EXCLUDED:
+            if prefix and turkish_casefold(prefix) not in self._DOMAINS:
                 continue
 
             start_l, start_c = offset_to_line_col(document.clean_content, match.start())
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{match.group(0)}' soyut metaforu yapay zeka metinlerinde sik gorulur.",
+                    message=f"'{match.group(0)}' soyut metaforu yapay zekâ metinlerinde sık görülür.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -161,16 +186,16 @@ class DunyasiMetaforuRule(Rule):
 
 
 class YolculukMetaforuRule(Rule):
-    """TD012: Soyut surecler icin 'yolculuk' metaforu kullanimi."""
+    """TD012: Soyut süreçler için 'yolculuk' metaforu kullanımı."""
 
     id = "TD012"
     name = "yolculuk-metaforu"
-    description = "Soyut surecler icin kliselesmis 'yolculuk' ('journey') metaforu."
+    description = "Soyut süreçler için klişeleşmiş 'yolculuk' ('journey') metaforu."
     severity = Severity.WARN
-    suggestion = "'Yolculuk' metaforu yerine 'sureci', 'adimlari' veya somut asamalari yazin."
+    suggestion = "'Yolculuk' metaforu yerine 'süreci', 'adımları' veya somut aşamaları yazın."
 
     _PATTERN = re.compile(
-        r"\b(?:dijital\s+dönüşüm|öğrenme|kariyer|başarı|hayat|kodlama|gelişim|dönüşüm|keşif)\s+yolculuğ(?:u|unda|una|unun|undan)\b|\bbir\s+yolculuğa\s+(?:çık|adım|başla)\w*\b",
+        r"\b(?:dijital\s+dönüşüm|öğrenme|kariyer|başarı|kodlama|gelişim|dönüşüm|keşif)\s+yolculuğ\w*",
         re.IGNORECASE,
     )
 
@@ -181,7 +206,7 @@ class YolculukMetaforuRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{match.group(0)}' klisesi yapay zeka metinlerinde soyut 'journey' cevirisidir.",
+                    message=f"'{match.group(0)}' klişesi yapay zekâ metinlerinde soyut 'journey' çevirisidir.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -193,13 +218,13 @@ class YolculukMetaforuRule(Rule):
 
 
 class DerinlemesineRule(Rule):
-    """TD013: 'Derinlemesine' abarti zarfi."""
+    """TD013: 'Derinlemesine' abartı zarfı."""
 
     id = "TD013"
     name = "derinlemesine"
-    description = "'Derinlemesine' ('in-depth / deeply') yapay zeka dolgu zarfi."
+    description = "'Derinlemesine' ('in-depth / deeply') yapay zekâ dolgu zarfı."
     severity = Severity.INFO
-    suggestion = "'Derinlemesine' yerine 'ayrintili bicimde', 'kapsamlica' veya dogrudan eylemin kendisini yazin."
+    suggestion = "'Derinlemesine' yerine 'ayrıntılı biçimde', 'kapsamlıca' veya doğrudan eylemin kendisini yazın."
 
     _PATTERN = re.compile(
         r"\bderinlemesine\s+(?:incele|ele\s+al|analiz|bak|araştır|öğren|değerlendir|anlat)\w*\b|\bderinlemesine\s+bir\s+(?:şekilde|bakış|inceleme|analiz)\b",
@@ -213,7 +238,7 @@ class DerinlemesineRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{match.group(0)}' ifadesi yapay zekanin sik kullandigi abartili bir dolgudur.",
+                    message=f"'{match.group(0)}' ifadesi yapay zekânın sik kullandığı abartılı bir dolgudur.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -225,14 +250,14 @@ class DerinlemesineRule(Rule):
 
 
 class KapsamliSekildeRule(Rule):
-    """TD014: 'Kapsamli bir sekilde' dolgusu."""
+    """TD014: 'Kapsamlı bir şekilde' dolgusu."""
 
     id = "TD014"
-    name = "kapsamli-sekilde"
-    description = "'Kapsamlı bir şekilde' ('comprehensively') dolgu kalibi."
+    name = "kapsamlı-şekilde"
+    description = "'Kapsamlı bir şekilde' ('comprehensively') dolgu kalıbı."
     severity = Severity.INFO
     suggestion = (
-        "'...bir şekilde' yerine 'kapsamlica', 'ayrintilariyla' veya dogrudan yalin eylem kullanin."
+        "'...bir şekilde' yerine 'kapsamlıca', 'ayrıntılarıyla' veya doğrudan yalın eylem kullanın."
     )
 
     _PATTERN = re.compile(
@@ -247,7 +272,7 @@ class KapsamliSekildeRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{match.group(0)}' kalibi yerine 'kapsamlica' veya 'ayrintilariyla' gibi yalin zarflar tercih edilebilir.",
+                    message=f"'{match.group(0)}' kalıbı yerine 'kapsamlıca' veya 'ayrıntılarıyla' gibi yalın zarflar tercih edilebilir.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -259,16 +284,22 @@ class KapsamliSekildeRule(Rule):
 
 
 class UcluSifatDizisiRule(Rule):
-    """TD015: Uclu sifat dizisi ('hizli, guvenli ve etkili bir cozum')."""
+    """TD015: Üçlü sıfat dizisi ('hızlı, güvenli ve etkili bir çözüm')."""
 
     id = "TD015"
-    name = "uclu-sifat-dizisi"
-    description = "Uclu sifat dizisi ('X, Y ve Z bir...' yapay zeka siralama uslubu)."
+    name = "üçlü-sıfat-dizisi"
+    description = "Üçlü sıfat dizisi ('X, Y ve Z bir...' yapay zekâ sıralama üslubu)."
     severity = Severity.INFO
-    suggestion = "Sifat dizisini sadelestirin veya somut gerekcelerle ayri cumlelere bolun."
+    suggestion = "Sıfat dizisini sadeleştirin veya somut gerekçelerle ayrı cümlelere bölün."
 
+    # Üç sıfat + soyut bir ad ('hızlı, güvenli ve esnek bir çözüm'). 'Ali, Veli ve Ayşe bir
+    # araya geldi' gibi sayımlar ad kümesi olmadığı için eşleşmez.
+    _NOUNS = (
+        "çözüm|yaklaşım|deneyim|platform|sistem|araç|yöntem|hizmet|ürün|süreç|yapı|"
+        "mimari|uygulama|altyapı|çerçeve|kombinasyon|tasarım"
+    )
     _PATTERN = re.compile(
-        r"\b([a-zçğıöşü]+),\s+([a-zçğıöşü]+)\s+ve\s+([a-zçğıöşü]+)\s+bir\s+([a-zçğıöşü]+)\b",
+        rf"\b([a-zçğıöşü]+),\s+([a-zçğıöşü]+)\s+ve\s+([a-zçğıöşü]+)\s+bir\s+({_NOUNS})\b",
         re.IGNORECASE,
     )
 
@@ -279,7 +310,7 @@ class UcluSifatDizisiRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{match.group(0)}' uclu sifat dizisi yapay zekanin tipik listeleme uslubudur.",
+                    message=f"'{match.group(0)}' üçlü sıfat dizisi yapay zekânın tipik listeleme üslubudur.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -291,13 +322,17 @@ class UcluSifatDizisiRule(Rule):
 
 
 class ParagrafAcilisTekrariRule(Rule):
-    """TD016: Ardisik paragraflarin ayni kalipla baslamasi."""
+    """TD016: Ardışık paragrafların aynı kalıpla başlaması."""
 
     id = "TD016"
-    name = "paragraf-acilis-tekrari"
-    description = "Ardisik iki veya daha fazla paragrafin ayni sozcuk veya kalipla baslamasi."
+    name = "paragraf-açılış-tekrarı"
+    description = "Ardışık iki veya daha fazla paragrafın aynı sözcük veya kalıpla başlaması."
     severity = Severity.WARN
-    suggestion = "Paragraf girislerini cesitlendirin; ayni baglac veya kalipla baslamaktan kacinin."
+    suggestion = "Paragraf girişlerini çeşitlendirin; aynı bağlaç veya kalıpla başlamaktan kaçının."
+
+    # Doğal metinde art arda paragrafı açabilen zamir ve gösterme sözcükleri; bunlar tek başına
+    # tekrar sayılmaz (iki sözcüklü tekrar, 'Bu yüzden ... Bu yüzden ...', yine yakalanır).
+    _COMMON_OPENERS = frozenset(["bu", "şu", "o", "bir", "ben", "biz", "sen", "siz", "ve", "bunlar"])
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []
@@ -320,7 +355,7 @@ class ParagrafAcilisTekrariRule(Rule):
             # Tekrarlayan ilk kelime veya ilk iki kelime
             is_repeated = False
             repeated_str = ""
-            if prev_w1 and w1 == prev_w1:
+            if prev_w1 and w1 == prev_w1 and w1 not in self._COMMON_OPENERS:
                 is_repeated = True
                 repeated_str = words[0]
             elif prev_w2 and w2 == prev_w2:
@@ -330,7 +365,7 @@ class ParagrafAcilisTekrariRule(Rule):
             if is_repeated:
                 findings.append(
                     self.create_finding(
-                        message=f"Ardisik paragraflar ayni giris kalibiyla basliyor: '{repeated_str}'.",
+                        message=f"Ardışık paragraflar aynı giriş kalıbıyla başlıyor: '{repeated_str}'.",
                         line=p.line,
                         column=p.column,
                         end_line=p.line,

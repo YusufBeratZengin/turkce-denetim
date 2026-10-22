@@ -1,4 +1,4 @@
-"""Temel veri yapilari, enum'lar ve model tanimlari."""
+"""Temel veri yapıları, enum'lar ve model tanımları."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from enum import Enum
 
 
 class Severity(str, Enum):
-    """Bulgu onem derecesi."""
+    """Bulgu önem derecesi."""
 
     INFO = "info"
     WARN = "warn"
@@ -15,7 +15,7 @@ class Severity(str, Enum):
 
     @property
     def level(self) -> int:
-        """Karsilastirma icin numerik seviye."""
+        """Karşılaştırma için numerik seviye."""
         return {
             Severity.INFO: 1,
             Severity.WARN: 2,
@@ -48,12 +48,12 @@ class Severity(str, Enum):
         for member in cls:
             if member.value == normalized:
                 return member
-        raise ValueError(f"Bilinmeyen onem derecesi: {value}. Gecerli: info, warn, error")
+        raise ValueError(f"Bilinmeyen önem derecesi: {value}. Geçerli: info, warn, error")
 
 
 @dataclass(frozen=True)
 class Finding:
-    """Kural denetimi sonucu uretilen tek bir bulgu."""
+    """Kural denetimi sonucu üretilen tek bir bulgu."""
 
     rule_id: str
     rule_name: str
@@ -69,7 +69,7 @@ class Finding:
 
 @dataclass
 class Sentence:
-    """Metin icindeki tek bir cumle ve konum bilgisi."""
+    """Metin içindeki tek bir cümle ve konum bilgisi."""
 
     text: str
     line: int
@@ -85,7 +85,7 @@ class Sentence:
 
 @dataclass
 class Paragraph:
-    """Metin icindeki tek bir paragraf ve icerdigi cumleler."""
+    """Metin içindeki tek bir paragraf ve içerdiği cümleler."""
 
     text: str
     line: int
@@ -101,7 +101,7 @@ class Paragraph:
 
 @dataclass
 class Document:
-    """Denetlenecek metin belgesi ve yapisal parcalari."""
+    """Denetlenecek metin belgesi ve yapısal parçaları."""
 
     raw_content: str
     clean_content: str
@@ -118,7 +118,7 @@ class Document:
 
 @dataclass
 class AnalysisResult:
-    """Tek bir belgenin ya da tum taramanin denetim sonucu."""
+    """Tek bir belgenin ya da tum taramanın denetim sonucu."""
 
     path: str | None
     findings: list[Finding]

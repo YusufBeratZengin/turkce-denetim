@@ -1,4 +1,4 @@
-"""Okunabilirlik ve metin akisi kurallari (TD017 - TD020, TD025)."""
+"""Okunabilirlik ve metin akışı kuralları (TD017 - TD020, TD025)."""
 
 from __future__ import annotations
 
@@ -52,13 +52,13 @@ _STOP_WORDS = frozenset(
 
 
 class CumleUzunluguRule(Rule):
-    """TD017: Asiri uzun cumle esigi."""
+    """TD017: Aşırı uzun cümle eşiği."""
 
     id = "TD017"
-    name = "cumle-uzunlugu"
-    description = "Cumlenin asiri uzun olmasi (varsayilan esik: 35 kelime)."
+    name = "cümle-uzunluğu"
+    description = "Cümlenin aşırı uzun olması (varsayılan eşik: 35 kelime)."
     severity = Severity.WARN
-    suggestion = "Cumleyi iki veya daha fazla bagimsiz cumleye bolerek okunabilirligi artirin."
+    suggestion = "Cümleyi iki veya daha fazla bağımsız cümleye bölerek okunabilirliği artırın."
 
     def __init__(self, max_words: int = 35) -> None:
         self.max_words = max_words
@@ -69,7 +69,7 @@ class CumleUzunluguRule(Rule):
             if sentence.word_count > self.max_words:
                 findings.append(
                     self.create_finding(
-                        message=f"Cumle asiri uzun ({sentence.word_count} kelime; onerilen en fazla {self.max_words}).",
+                        message=f"Cümle aşırı uzun ({sentence.word_count} kelime; önerilen en fazla {self.max_words}).",
                         line=sentence.line,
                         column=sentence.column,
                         end_line=sentence.end_line,
@@ -81,13 +81,13 @@ class CumleUzunluguRule(Rule):
 
 
 class ParagrafUzunluguRule(Rule):
-    """TD018: Asiri uzun paragraf esigi."""
+    """TD018: Aşırı uzun paragraf eşiği."""
 
     id = "TD018"
-    name = "paragraf-uzunlugu"
-    description = "Paragrafin asiri uzun olmasi (varsayilan esik: 120 kelime)."
+    name = "paragraf-uzunluğu"
+    description = "Paragrafın aşırı uzun olması (varsayılan eşik: 120 kelime)."
     severity = Severity.INFO
-    suggestion = "Paragrafi alt dusunce bloklarina veya alt basliklara bolun."
+    suggestion = "Paragrafi alt düşünce bloklarına veya alt başlıklara bölün."
 
     def __init__(self, max_words: int = 120) -> None:
         self.max_words = max_words
@@ -98,7 +98,7 @@ class ParagrafUzunluguRule(Rule):
             if paragraph.word_count > self.max_words:
                 findings.append(
                     self.create_finding(
-                        message=f"Paragraf asiri uzun ({paragraph.word_count} kelime; onerilen en fazla {self.max_words}).",
+                        message=f"Paragraf aşırı uzun ({paragraph.word_count} kelime; önerilen en fazla {self.max_words}).",
                         line=paragraph.line,
                         column=paragraph.column,
                         end_line=paragraph.end_line,
@@ -110,13 +110,13 @@ class ParagrafUzunluguRule(Rule):
 
 
 class YakinKelimeTekrariRule(Rule):
-    """TD019: Ayni koklu kelimenin kisa araliklarla tekrari."""
+    """TD019: Aynı köklü kelimenin kısa aralıklarla tekrarı."""
 
     id = "TD019"
-    name = "yakin-kelime-tekrari"
-    description = "Ayni cumlede ayni kokten tureyen kelimenin 3 veya daha fazla kez tekrarlanmasi."
+    name = "yakın-kelime-tekrarı"
+    description = "Aynı cümlede aynı kökten türeyen kelimenin 3 veya daha fazla kez tekrarlanması."
     severity = Severity.WARN
-    suggestion = "Tekrarlayan kelimeler yerine zamir veya esanlamli sozcukler kullanin."
+    suggestion = "Tekrarlayan kelimeler yerine zamir veya eşanlamlı sözcükler kullanın."
 
     def __init__(self, min_repetition: int = 3) -> None:
         self.min_repetition = min_repetition
@@ -138,7 +138,7 @@ class YakinKelimeTekrariRule(Rule):
                 if count >= self.min_repetition:
                     findings.append(
                         self.create_finding(
-                            message=f"'{root}' koku ayni cumle icinde {count} kez tekrarlandi.",
+                            message=f"'{root}' koku aynı cümle içinde {count} kez tekrarlandı.",
                             line=sentence.line,
                             column=sentence.column,
                             end_line=sentence.end_line,
@@ -150,13 +150,13 @@ class YakinKelimeTekrariRule(Rule):
 
 
 class VirgulZinciriRule(Rule):
-    """TD020: Tek bir cumlede asiri virgul zincirlenmesi."""
+    """TD020: Tek bir cümlede aşırı virgül zincirlenmesi."""
 
     id = "TD020"
-    name = "virgul-zinciri"
-    description = "Tek cumlede 5 veya daha fazla virgul bulunmasi (virgul zinciri)."
+    name = "virgül-zinciri"
+    description = "Tek cümlede 5 veya daha fazla virgül bulunması (virgül zinciri)."
     severity = Severity.INFO
-    suggestion = "Cumleyi bolun ya da noktali virgul / maddeleme duzenini tercih edin."
+    suggestion = "Cümleyi bölün ya da noktalı virgül / maddeleme düzenini tercih edin."
 
     def __init__(self, max_commas: int = 5) -> None:
         self.max_commas = max_commas
@@ -168,7 +168,7 @@ class VirgulZinciriRule(Rule):
             if comma_count >= self.max_commas:
                 findings.append(
                     self.create_finding(
-                        message=f"Cumlede {comma_count} virgul kullanilmis; takibi zorlastirabilir.",
+                        message=f"Cümlede {comma_count} virgül kullanılmış; takibi zorlaştırabilir.",
                         line=sentence.line,
                         column=sentence.column,
                         end_line=sentence.end_line,
@@ -180,13 +180,13 @@ class VirgulZinciriRule(Rule):
 
 
 class VeyaBaglacTekrariRule(Rule):
-    """TD025: Tek cumlede 've / veya' baglaclarinin asiri tekrari."""
+    """TD025: Tek cümlede 've / veya' bağlaçlarının aşırı tekrarı."""
 
     id = "TD025"
-    name = "veya-baglac-tekrari"
-    description = "Tek cumlede 3 veya daha fazla baglac ('ve', 'veya', 'ya da') yigilmasi."
+    name = "veya-bağlaç-tekrarı"
+    description = "Tek cümlede 3 veya daha fazla bağlaç ('ve', 'veya', 'ya da') yığılması."
     severity = Severity.INFO
-    suggestion = "Baglac yigilmasi yerine virgullu siralama yapin veya cumleyi bolun."
+    suggestion = "Bağlaç yığılması yerine virgüllü sıralama yapın veya cümleyi bölün."
 
     def __init__(self, max_conjunctions: int = 3) -> None:
         self.max_conjunctions = max_conjunctions
@@ -199,7 +199,7 @@ class VeyaBaglacTekrariRule(Rule):
             if conjunction_count >= self.max_conjunctions:
                 findings.append(
                     self.create_finding(
-                        message=f"Cumlede {conjunction_count} baglac ('ve/veya') yigilmasi tespit edildi.",
+                        message=f"Cümlede {conjunction_count} bağlaç ('ve/veya') yığılması tespit edildi.",
                         line=sentence.line,
                         column=sentence.column,
                         end_line=sentence.end_line,

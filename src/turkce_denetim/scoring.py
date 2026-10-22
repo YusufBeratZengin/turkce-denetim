@@ -1,4 +1,4 @@
-"""Dogallik puani (Naturalness Score) hesaplama modulu."""
+"""Doğallık puanı (Naturalness Score) hesaplama modülü."""
 
 from __future__ import annotations
 
@@ -18,18 +18,18 @@ _SEVERITY_WEIGHTS = {
 
 
 def calculate_naturalness_score(word_count: int, findings: list[Finding]) -> float:
-    """Metnin 0 - 100 arasi dogallik puanini hesaplar.
+    """Metnin 0 - 100 arası doğallık puanını hesaplar.
 
-    Formul:
-    1. Her bulgu onem derecesine gore agirliklandirilir:
-       - Error (Yazim/Hata): 8.0 puan
-       - Warn (Ceviri/Yapay zeka kokusu): 3.0 puan
-       - Info (Uslup/Okunabilirlik onerisi): 1.0 puan
-    2. Toplam ceza puani metin uzunluguna gore 100 kelime basina normallestirilir:
-       Normallestirilmis Ceza = (Toplam Ceza * 100) / max(Kelime Sayisi, 50)
-    3. Dogallik Puani = max(0.0, min(100.0, 100.0 - Normallestirilmis Ceza))
+    Formül:
+    1. Her bulgu önem derecesine göre ağırlıklandırılır:
+       - Error (Yazım/Hata): 8.0 puan
+       - Warn (Çeviri/Yapay zekâ kokusu): 3.0 puan
+       - Info (Üslup/Okunabilirlik önerisi): 1.0 puan
+    2. Toplam ceza puanı metin uzunluğuna göre 100 kelime başına normalleştirilir:
+       Normalleştirilmiş Ceza = (Toplam Ceza * 100) / max(Kelime Sayısı, 50)
+    3. Doğallık Puanı = max(0.0, min(100.0, 100.0 - Normalleştirilmiş Ceza))
 
-    Temiz ve dogal yazilmis metinler 90-100 puan alir.
+    Temiz ve doğal yazılmış metinler 90-100 puan alir.
     """
     if word_count <= 0:
         return 100.0
@@ -43,7 +43,7 @@ def calculate_naturalness_score(word_count: int, findings: list[Finding]) -> flo
 
 
 def get_naturalness_rating(score: float) -> str:
-    """Puanin metinsel seviye aciklamasi."""
+    """Puanın metinsel seviye açıklaması."""
     if score >= 90.0:
         return "Yüksek Doğallık (Temiz ve akıcı)"
     if score >= 75.0:

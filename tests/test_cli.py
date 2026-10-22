@@ -94,7 +94,7 @@ def test_cli_stdin_input(
 ) -> None:
     import io
 
-    monkeypatch.setattr("sys.stdin", io.StringIO("Günün sonunda karar verildi."))
+    monkeypatch.setattr("sys.stdin", io.StringIO("Günün sonunda, karar verildi."))
 
     exit_code = main(["-", "--format", "json"])
     assert exit_code == 0

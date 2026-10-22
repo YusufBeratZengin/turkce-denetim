@@ -1,4 +1,4 @@
-"""turkce-denetim: Turkce metinlerde yapay zeka ve ceviri kokusu kaliplarini tespit eden kuralli linter."""
+"""turkce-denetim: Türkçe metinlerde yapay zekâ ve çeviri kokusu kalıplarını tespit eden kurallı linter."""
 
 from __future__ import annotations
 

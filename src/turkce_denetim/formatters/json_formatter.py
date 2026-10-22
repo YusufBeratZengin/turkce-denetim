@@ -1,4 +1,4 @@
-"""JSON cikti bicimlendiricisi."""
+"""JSON çıktı biçimlendiricisi."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 def format_json(results: list[AnalysisResult], indent: int = 2) -> str:
-    """Denetim sonuclarini yapilandirilmis JSON dizgisine cevirir."""
+    """Denetim sonuçlarını yapılandırılmış JSON dizgisine çevirir."""
     all_findings = [f for r in results for f in r.findings]
     total_words = sum(r.word_count for r in results)
     overall_score = calculate_naturalness_score(total_words, all_findings)

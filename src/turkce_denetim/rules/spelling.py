@@ -1,4 +1,4 @@
-"""Yazim ve tipografi kurallari (TD021 - TD024)."""
+"""Yazım ve tipografi kuralları (TD021 - TD024)."""
 
 from __future__ import annotations
 
@@ -11,15 +11,15 @@ from turkce_denetim.rules.base import Rule
 
 
 class DeDaBaglaciRule(Rule):
-    """TD021: 'de/da' baglacinin bitisik yazimi veya bulunma halinin yanlis ayrilmasi."""
+    """TD021: 'de/da' bağlacının bitişik yazımı veya bulunma halinin yanlış ayrılması."""
 
     id = "TD021"
-    name = "de-da-baglaci"
+    name = "de-da-bağlacı"
     description = (
-        "'de/da' baglacinin fiillerden sonra bitisik yazilmasi veya bulunma halinin ayri yazilmasi."
+        "'de/da' bağlacının fiillerden sonra bitişik yazılması veya bulunma halinin ayrı yazılması."
     )
     severity = Severity.ERROR
-    suggestion = "Baglac olan 'de/da' her zaman ayri yazilir ve 'te/ta' bicimini almaz. Bulunma durumu eki '-de/-da' ise bitisik yazilir."
+    suggestion = "Bağlaç olan 'de/da' her zaman ayrı yazılır ve 'te/ta' biçimini almaz. Bulunma durumu eki '-de/-da' ise bitişik yazılır."
 
     # Yaygin cekimli fiiller ardindan bitisen -de/-da/-te/-ta (yalniz yuksek guvenli durumlar)
     _COMMON_VERBS = (
@@ -35,16 +35,28 @@ class DeDaBaglaciRule(Rule):
         re.IGNORECASE,
     )
 
-    # Zamir ardindan bitisen baglac (yuksek guvenli pozisyonlar)
+    # Zamir ardindan bitisen baglac: yalnizca ozne ile uyumlu birinci/ikinci tekil kisi
+    # gecmis zaman fiili izlediginde ('bende geldim'). 'Bende bir sorun var' bulunma halidir.
     _PRONOUN_DE = re.compile(
-        r"\b(ben|sen|o|biz|siz|onlar)de\s+(?:de|bir|gel|git|yap|bil|gör|iste|sev|duy|çalış|dur|oku|yaz|düşün|katıl)\w*\b",
+        r"\b(?:(ben)de\s+[a-zçğıöşü]+?[dt][ıiuü]m|(sen)de\s+[a-zçğıöşü]+?[dt][ıiuü]n)\b",
         re.IGNORECASE,
     )
 
-    # Yanlis ayrilmis bulunma hali (ev de kaldim, okul da okudum vb.)
+    # Yanlis ayrilmis bulunma hali: fiil birinci kisi ise ('ev de kaldim') 'de' baglac olamaz,
+    # ozne ben/biz oldugundan yer bildirir. 'Ev de kalabalikti' gibi ucuncu kisi cumleler dogaldir.
     _SPLIT_LOCATIVE = re.compile(
-        r"\b(ev|ofis|okul|sokak|oda|masa|yatak|araba|şehir|köy)\s+(?:de|da|te|ta)\s+(?:kal|dur|otur|çalış|yat|uyu|büyü|yaşa)\w*\b",
+        r"\b(ev|ofis|okul|sokak|oda|masa|yatak|araba|şehir|köy)\s+(?:de|da|te|ta)\s+"
+        r"(?:kal|dur|otur|çalış|yat|uyu|büyü|yaşa)[a-zçğıöşü]*?(?:[dt][ıiuü][mk]|yorum|yoruz|ırım|irim)\b",
         re.IGNORECASE,
+    )
+
+    # 'grupta', 'kulupte', 'tipte' gibi -p ile biten adlar zarf-fiil degildir.
+    _P_NOUNS = frozenset(
+        [
+            "grup", "kulüp", "tip", "tüp", "ip", "kup", "çip", "klip", "slip", "hip", "şip",
+            "set", "kamp", "stop", "shop", "top", "kep", "pip", "wip", "dip", "lip", "zip",
+            "scoop", "loop", "hop", "drop", "flip", "chip", "ship", "trip", "cup",
+        ]
     )
 
     _NOUNS_TI = frozenset(
@@ -78,7 +90,7 @@ class DeDaBaglaciRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"Fiilden sonra gelen '{suffix_part}' baglactir ve ayri yazilmalidir ('{stem_part} {suffix_part}').",
+                    message=f"Fiilden sonra gelen '{suffix_part}' bağlaçtır ve ayrı yazılmalıdır ('{stem_part} {suffix_part}').",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -91,12 +103,14 @@ class DeDaBaglaciRule(Rule):
         for match in self._VERB_GERUND_DE.finditer(document.clean_content):
             stem_part = match.group(1)
             suffix_part = match.group(2)
+            if turkish_casefold(stem_part) in self._P_NOUNS:
+                continue
             start_l, start_c = offset_to_line_col(document.clean_content, match.start())
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             correct_conj = "da" if suffix_part in ("da", "ta") else "de"
             findings.append(
                 self.create_finding(
-                    message=f"Zarf-fiilden sonra gelen baglac ayri yazilmalidir ('{stem_part} {correct_conj}').",
+                    message=f"Zarf-fiilden sonra gelen bağlaç ayrı yazılmalıdır ('{stem_part} {correct_conj}').",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -108,12 +122,12 @@ class DeDaBaglaciRule(Rule):
 
         # 2. Zamir + de baglaci
         for match in self._PRONOUN_DE.finditer(document.clean_content):
-            pronoun = match.group(1)
+            pronoun = match.group(1) or match.group(2)
             start_l, start_c = offset_to_line_col(document.clean_content, match.start())
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"Zamir ardindaki '{pronoun}de' baglaci ayri yazilmalidir ('{pronoun} de').",
+                    message=f"Zamir ardındaki '{pronoun}de' bağlacı ayrı yazılmalıdır ('{pronoun} de').",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -130,7 +144,7 @@ class DeDaBaglaciRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"Bulunma durumu eki bitisik yazilmalidir ('{noun}de/{noun}da').",
+                    message=f"Bulunma durumu eki bitişik yazılmalıdır ('{noun}de/{noun}da').",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -143,14 +157,14 @@ class DeDaBaglaciRule(Rule):
 
 
 class KiBaglaciRule(Rule):
-    """TD022: Fiillerden sonra gelen 'ki' baglacinin bitisik yazimi."""
+    """TD022: Fiillerden sonra gelen 'ki' bağlacının bitişik yazımı."""
 
     id = "TD022"
-    name = "ki-baglaci"
-    description = "Fiillerden ve baglac kaliplarindan sonra gelen 'ki' baglacinin bitisik yazimi."
+    name = "ki-bağlacı"
+    description = "Fiillerden ve bağlaç kalıplarından sonra gelen 'ki' bağlacının bitişik yazımı."
     severity = Severity.ERROR
     suggestion = (
-        "Fiillerden sonra gelen 'ki' baglacini ayri yazin ('gördüm ki', 'demek ki', 'yeter ki')."
+        "Fiillerden sonra gelen 'ki' bağlacını ayrı yazın ('gördüm ki', 'demek ki', 'yeter ki')."
     )
 
     # SOMBAHCEMI istisnalari (bitisik yazilan kaliplasmis ki'ler)
@@ -184,7 +198,7 @@ class KiBaglaciRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"Fiilden sonra gelen 'ki' baglac olarak ayri yazilmalidir ('{stem_part} ki').",
+                    message=f"Fiilden sonra gelen 'ki' bağlaç olarak ayrı yazılmalıdır ('{stem_part} ki').",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -197,13 +211,13 @@ class KiBaglaciRule(Rule):
 
 
 class BilesikAyriYazimRule(Rule):
-    """TD023: Turkcede yaygin yapilan bilesik/ayri yazim ve imla yanlislari."""
+    """TD023: Türkçede yaygın yapılan bileşik/ayrı yazım ve imla yanlışları."""
 
     id = "TD023"
-    name = "bilesik-ayri-yazim"
-    description = "Sikca yapilan imla ve bilesik/ayri sozcuk hatalari ('herşey', 'bir çok' vb.)."
+    name = "bileşik-ayrı-yazım"
+    description = "Sıkça yapılan imla ve bileşik/ayrı sözcük hataları ('herşey', 'bir çok' vb.)."
     severity = Severity.ERROR
-    suggestion = "TDK imla kurallarina uygun dogru yazimi tercih edin."
+    suggestion = "TDK imla kurallarına uygun doğru yazımı tercih edin."
 
     _ERRORS: dict[str, str] = {
         "herşey": "her şey",
@@ -247,7 +261,7 @@ class BilesikAyriYazimRule(Rule):
             end_l, end_c = offset_to_line_col(document.clean_content, match.end())
             findings.append(
                 self.create_finding(
-                    message=f"'{raw}' yazimi hatali; dogrusu '{correct}' olmalidir.",
+                    message=f"'{raw}' yazımı hatalı; doğrusu '{correct}' olmalıdır.",
                     line=start_l,
                     column=start_c,
                     end_line=end_l,
@@ -260,15 +274,15 @@ class BilesikAyriYazimRule(Rule):
 
 
 class TirnakTutarsizligiRule(Rule):
-    """TD024: Metin genelinde tirnak/kesme isaretlerinin tutarsiz kullanimi."""
+    """TD024: Metin genelinde tırnak/kesme işaretlerinin tutarsız kullanımı."""
 
     id = "TD024"
-    name = "tirnak-tutarsizligi"
+    name = "tırnak-tutarsızlığı"
     description = (
         "Metinde hem duz tirnak (\" / ') hem de tipografik tirnak (“” / ’) karisik kullanimi."
     )
     severity = Severity.INFO
-    suggestion = "Metin boyunca tutarli tek bir tirnak/kesme stili tercih edin."
+    suggestion = "Metin boyunca tutarlı tek bir tırnak/kesme stili tercih edin."
 
     def check(self, document: Document) -> list[Finding]:
         findings: list[Finding] = []
@@ -280,12 +294,12 @@ class TirnakTutarsizligiRule(Rule):
         if has_straight_double and has_curly_double:
             findings.append(
                 self.create_finding(
-                    message='Metinde hem duz cift tirnak (") hem de tipografik cift tirnak (“ ”) birlikte kullanilmis.',
+                    message='Metinde hem düz çift tırnak (") hem de tipografik çift tırnak (“ ”) birlikte kullanılmış.',
                     line=1,
                     column=1,
                     end_line=1,
                     end_column=1,
-                    suggestion="Belge boyunca tek bir cift tirnak bicimi tercih edin.",
+                    suggestion="Belge boyunca tek bir çift tırnak biçimi tercih edin.",
                 )
             )
 
@@ -295,12 +309,12 @@ class TirnakTutarsizligiRule(Rule):
         if has_straight_single and has_curly_single:
             findings.append(
                 self.create_finding(
-                    message="Metinde hem duz kesme (') hem de tipografik kesme (’) birlikte kullanilmis.",
+                    message="Metinde hem düz kesme (') hem de tipografik kesme (’) birlikte kullanılmış.",
                     line=1,
                     column=1,
                     end_line=1,
                     end_column=1,
-                    suggestion="Belge boyunca tek bir kesme isareti stili tercih edin.",
+                    suggestion="Belge boyunca tek bir kesme işareti stili tercih edin.",
                 )
             )
 

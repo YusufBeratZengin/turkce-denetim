@@ -1,4 +1,4 @@
-"""Cikti bicimlendiricileri (text, json, sarif)."""
+"""Çıktı biçimlendiricileri (text, json, sarif)."""
 
 from turkce_denetim.formatters.json_formatter import format_json
 from turkce_denetim.formatters.sarif_formatter import format_sarif
