@@ -112,3 +112,18 @@ def test_cli_score_only(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> N
     captured = capsys.readouterr()
     score = float(captured.out.strip())
     assert 90.0 <= score <= 100.0
+
+
+def test_cli_fixtures() -> None:
+    fixtures_dir = Path(__file__).parent / "fixtures"
+    clean_path = fixtures_dir / "clean.md"
+    dirty_path = fixtures_dir / "dirty.md"
+
+    assert clean_path.exists(), "clean.md fixture must exist"
+    assert dirty_path.exists(), "dirty.md fixture must exist"
+
+    # clean.md has 0 findings and must exit with 0
+    assert main([str(clean_path), "--no-color"]) == 0
+
+    # dirty.md has error-level findings and must exit with 1
+    assert main([str(dirty_path), "--no-color"]) == 1

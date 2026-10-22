@@ -93,6 +93,14 @@ turkce-denetim document.md --score-only
 | `--score-only` | Flag | False | Print only the numerical naturalness score. |
 | `-v, --version` | Flag | | Show program version. |
 
+### Exit Codes
+
+| Code | Meaning |
+|---|---|
+| `0` | Success: no error-level findings detected (text is clean or contains only info/warn suggestions). |
+| `1` | Linting errors found: one or more `error`-severity findings detected (e.g. spelling or grammar violations). |
+| `2` | Usage, configuration, or I/O error: invalid CLI arguments, unreadable files, or malformed TOML configuration. |
+
 ---
 
 ## Rules Catalog

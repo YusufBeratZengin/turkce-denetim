@@ -43,7 +43,9 @@ jobs:
         run: pytest
 
       - name: Smoke test CLI
+        shell: bash
         run: |
           turkce-denetim --version
           turkce-denetim --help
-          turkce-denetim README.md
+          turkce-denetim tests/fixtures/clean.md
+          if turkce-denetim tests/fixtures/dirty.md; then exit 1; fi

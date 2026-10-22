@@ -93,6 +93,14 @@ turkce-denetim metin.md --score-only
 | `--score-only` | Bayrak | False | Yalnızca doğallık puanını yazar. |
 | `-v, --version` | Bayrak | | Sürümü yazar. |
 
+### Çıkış Kodları (Exit Codes)
+
+| Kod | Anlamı |
+|---|---|
+| `0` | Başarılı: hata (`error`) düzeyinde bulgu tespit edilmedi (metin temiz veya yalnızca `info`/`warn` önerileri içeriyor). |
+| `1` | Denetim hatası: bir veya daha fazla `error` önem derecesinde bulgu tespit edildi (örn. yazım ve bağlaç hataları). |
+| `2` | Kullanım, yapılandırma veya G/Ç (I/O) hatası: geçersiz CLI bağımsız değişkenleri, okunamayan dosyalar veya hatalı TOML yapılandırması. |
+
 ---
 
 ## Kural Kataloğu
