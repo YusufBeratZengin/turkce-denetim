@@ -14,7 +14,7 @@ class DeDaBaglaciRule(Rule):
     """TD021: 'de/da' bağlacının bitişik yazımı veya bulunma halinin yanlış ayrılması."""
 
     id = "TD021"
-    name = "de-da-bağlacı"
+    name = "de-da-baglaci"
     description = (
         "'de/da' bağlacının fiillerden sonra bitişik yazılması veya bulunma halinin ayrı yazılması."
     )
@@ -188,7 +188,7 @@ class KiBaglaciRule(Rule):
     """TD022: Fiillerden sonra gelen 'ki' bağlacının bitişik yazımı."""
 
     id = "TD022"
-    name = "ki-bağlacı"
+    name = "ki-baglaci"
     description = "Fiillerden ve bağlaç kalıplarından sonra gelen 'ki' bağlacının bitişik yazımı."
     severity = Severity.ERROR
     suggestion = (
@@ -242,7 +242,7 @@ class BilesikAyriYazimRule(Rule):
     """TD023: Türkçede yaygın yapılan bileşik/ayrı yazım ve imla yanlışları."""
 
     id = "TD023"
-    name = "bileşik-ayrı-yazım"
+    name = "bilesik-ayri-yazim"
     description = "Sıkça yapılan imla ve bileşik/ayrı sözcük hataları ('herşey', 'bir çok' vb.)."
     severity = Severity.ERROR
     suggestion = "TDK imla kurallarına uygun doğru yazımı tercih edin."
@@ -305,7 +305,7 @@ class TirnakTutarsizligiRule(Rule):
     """TD024: Metin genelinde tırnak/kesme işaretlerinin tutarsız kullanımı."""
 
     id = "TD024"
-    name = "tırnak-tutarsızlığı"
+    name = "tirnak-tutarsizligi"
     description = (
         "Metinde hem düz tırnak (\" / ') hem de tipografik tırnak (“” / ’) karışık kullanımı."
     )

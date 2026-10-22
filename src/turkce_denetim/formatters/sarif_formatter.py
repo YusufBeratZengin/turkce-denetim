@@ -24,7 +24,7 @@ def _rule_to_sarif_descriptor(rule_cls: type[Any]) -> dict[str, Any]:
     level = _SARIF_LEVEL_MAP.get(rule_cls.severity, "warning")
     return {
         "id": rule_cls.id,
-        "name": rule_cls.name.replace("-", "_"),
+        "name": rule_cls.name,
         "shortDescription": {
             "text": rule_cls.description,
         },

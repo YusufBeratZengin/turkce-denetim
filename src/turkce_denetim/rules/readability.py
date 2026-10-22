@@ -55,7 +55,7 @@ class CumleUzunluguRule(Rule):
     """TD017: Aşırı uzun cümle eşiği."""
 
     id = "TD017"
-    name = "cümle-uzunluğu"
+    name = "cumle-uzunlugu"
     description = "Cümlenin aşırı uzun olması (varsayılan eşik: 35 kelime)."
     severity = Severity.WARN
     suggestion = "Cümleyi iki veya daha fazla bağımsız cümleye bölerek okunabilirliği artırın."
@@ -84,7 +84,7 @@ class ParagrafUzunluguRule(Rule):
     """TD018: Aşırı uzun paragraf eşiği."""
 
     id = "TD018"
-    name = "paragraf-uzunluğu"
+    name = "paragraf-uzunlugu"
     description = "Paragrafın aşırı uzun olması (varsayılan eşik: 120 kelime)."
     severity = Severity.INFO
     suggestion = "Paragrafı alt düşünce bloklarına veya alt başlıklara bölün."
@@ -113,7 +113,7 @@ class YakinKelimeTekrariRule(Rule):
     """TD019: Aynı köklü kelimenin kısa aralıklarla tekrarı."""
 
     id = "TD019"
-    name = "yakın-kelime-tekrarı"
+    name = "yakin-kelime-tekrari"
     description = "Aynı cümlede aynı kökten türeyen kelimenin 3 veya daha fazla kez tekrarlanması."
     severity = Severity.WARN
     suggestion = "Tekrarlayan kelimeler yerine zamir veya eşanlamlı sözcükler kullanın."
@@ -153,7 +153,7 @@ class VirgulZinciriRule(Rule):
     """TD020: Tek bir cümlede aşırı virgül zincirlenmesi."""
 
     id = "TD020"
-    name = "virgül-zinciri"
+    name = "virgul-zinciri"
     description = "Tek cümlede 5 veya daha fazla virgül bulunması (virgül zinciri)."
     severity = Severity.INFO
     suggestion = "Cümleyi bölün ya da noktalı virgül / maddeleme düzenini tercih edin."
@@ -183,7 +183,7 @@ class VeyaBaglacTekrariRule(Rule):
     """TD025: Tek cümlede 've / veya' bağlaçlarının aşırı tekrarı."""
 
     id = "TD025"
-    name = "veya-bağlaç-tekrarı"
+    name = "veya-baglac-tekrari"
     description = "Tek cümlede 3 veya daha fazla bağlaç ('ve', 'veya', 'ya da') yığılması."
     severity = Severity.INFO
     suggestion = "Bağlaç yığılması yerine virgüllü sıralama yapın veya cümleyi bölün."

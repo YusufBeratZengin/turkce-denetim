@@ -14,7 +14,7 @@ class ElbetteAcilisRule(Rule):
     """TD008: 'Elbette!', 'Kesinlikle!' gibi dalkavukça yapay zekâ açılışları."""
 
     id = "TD008"
-    name = "elbette-açılış"
+    name = "elbette-acilis"
     description = (
         "Metin veya yanıt başındaki dalkavukça açılış ünlemleri ('Elbette!', 'Kesinlikle!')."
     )
@@ -87,7 +87,7 @@ class SonucOlarakKapanisRule(Rule):
     """TD010: Son paragrafın 'Sonuç olarak,' ile başlaması klişesi."""
 
     id = "TD010"
-    name = "sonuç-olarak-kapanış"
+    name = "sonuc-olarak-kapanis"
     description = (
         "Kapanış paragrafının 'Sonuç olarak,', 'Özetle,' gibi basmakalıp bağlaçla açılması."
     )
@@ -129,7 +129,7 @@ class DunyasiMetaforuRule(Rule):
     """TD011: '...dünyası / dünyasında' soyut metafor kalıbı."""
 
     id = "TD011"
-    name = "dünyası-metaforu"
+    name = "dunyasi-metaforu"
     description = "'...dünyasında' kalıbı ('in the world of...' çevirisi)."
     severity = Severity.INFO
     suggestion = "'...dünyasında' yerine doğrudan alan adını yönelme veya bulunma ile belirtin (örn: 'yazılımda')."
@@ -253,7 +253,7 @@ class KapsamliSekildeRule(Rule):
     """TD014: 'Kapsamlı bir şekilde' dolgusu."""
 
     id = "TD014"
-    name = "kapsamlı-şekilde"
+    name = "kapsamli-sekilde"
     description = "'Kapsamlı bir şekilde' ('comprehensively') dolgu kalıbı."
     severity = Severity.INFO
     suggestion = (
@@ -287,7 +287,7 @@ class UcluSifatDizisiRule(Rule):
     """TD015: Üçlü sıfat dizisi ('hızlı, güvenli ve etkili bir çözüm')."""
 
     id = "TD015"
-    name = "üçlü-sıfat-dizisi"
+    name = "uclu-sifat-dizisi"
     description = "Üçlü sıfat dizisi ('X, Y ve Z bir...' yapay zekâ sıralama üslubu)."
     severity = Severity.INFO
     suggestion = "Sıfat dizisini sadeleştirin veya somut gerekçelerle ayrı cümlelere bölün."
@@ -325,7 +325,7 @@ class ParagrafAcilisTekrariRule(Rule):
     """TD016: Ardışık paragrafların aynı kalıpla başlaması."""
 
     id = "TD016"
-    name = "paragraf-açılış-tekrarı"
+    name = "paragraf-acilis-tekrari"
     description = "Ardışık iki veya daha fazla paragrafın aynı sözcük veya kalıpla başlaması."
     severity = Severity.WARN
     suggestion = "Paragraf girişlerini çeşitlendirin; aynı bağlaç veya kalıpla başlamaktan kaçının."

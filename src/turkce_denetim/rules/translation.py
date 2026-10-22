@@ -14,7 +14,7 @@ class IleBirlikteAsiriRule(Rule):
     """TD001: '...ile birlikte' kalıbının aşırı/gereksiz kullanımı."""
 
     id = "TD001"
-    name = "ile-birlikte-aşırı"
+    name = "ile-birlikte-asiri"
     description = "'...ile birlikte' dolgu kalıbı ('along with' çevirisi)."
     severity = Severity.INFO
     suggestion = "'ile birlikte' yerine 'ile', 'bunun yanında', 'ayrıca' veya yalın ek kullanın."
@@ -107,7 +107,7 @@ class GununSonundaRule(Rule):
     """TD003: 'günün sonunda' basmakalıp çevirisi."""
 
     id = "TD003"
-    name = "günün-sonunda"
+    name = "gunun-sonunda"
     description = "'Günün sonunda' basmakalıp deyimi ('at the end of the day' çevirisi)."
     severity = Severity.WARN
     suggestion = (
@@ -146,7 +146,7 @@ class OnemlidirKiRule(Rule):
     """TD004: '...önemlidir ki' kalıbı."""
 
     id = "TD004"
-    name = "önemlidir-ki"
+    name = "onemlidir-ki"
     description = (
         "'...önemlidir ki' veya 'şunu belirtmek önemlidir ki' çevirisi ('it is important that')."
     )
@@ -180,7 +180,7 @@ class KonusundaYigilmasiRule(Rule):
     """TD005: Bir cümlede '...konusunda' yığılması."""
 
     id = "TD005"
-    name = "konusunda-yığılması"
+    name = "konusunda-yigilmasi"
     description = (
         "Aynı cümlede birden çok '...konusunda / konusundaki' yığılması ('regarding' çevirisi)."
     )
@@ -264,7 +264,7 @@ class EdilgenYigilmasiRule(Rule):
     """TD007: Cümlede aşırı edilgen çatı yoğunluğu."""
 
     id = "TD007"
-    name = "edilgen-yığılması"
+    name = "edilgen-yigilmasi"
     description = (
         "Tek bir cümlede 3 veya daha fazla edilgen eylem bulunması (edilgen çatı yığılması)."
     )
