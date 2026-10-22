@@ -58,6 +58,9 @@ turkce-denetim
 turkce-denetim document.md
 turkce-denetim docs/
 
+# Same thing as a module (when the script is not on PATH)
+python -m turkce_denetim document.md
+
 # Read from standard input
 cat draft.txt | turkce-denetim -
 
@@ -100,9 +103,9 @@ The linter implements 25 rules across 4 primary categories:
 
 | ID | Name | Severity | Problematic Example | Suggestion |
 |---|---|---|---|---|
-| `TD001` | `ile-birlikte-asiri` | `warn` | "Teknolojinin gelişmesi ile birlikte..." | Use simple case endings ("gelişmesiyle") or conjunctions. |
-| `TD002` | `bu-noktada` | `warn` | "Bu noktada dikkat etmeliyiz." | Use "burada", "bu aşamada", or enter directly into the topic. |
-| `TD003` | `gunun-sonunda` | `warn` | "Günün sonunda karar verildi." | Literal calque of "at the end of the day". Use "sonuçta" or "nihayetinde". |
+| `TD001` | `ile-birlikte-asiri` | `info` | "Teknolojinin gelişmesi ile birlikte..." | Use simple case endings ("gelişmesiyle") or conjunctions. |
+| `TD002` | `bu-noktada` | `info` | "Bu noktada dikkat etmeliyiz." | Use "burada", "bu aşamada", or enter directly into the topic. |
+| `TD003` | `gunun-sonunda` | `warn` | "Günün sonunda, karar verildi." | Literal calque of "at the end of the day". Use "sonuçta" or "nihayetinde". Plain time reference ("Günün sonunda eve döndük") is not flagged. |
 | `TD004` | `onemlidir-ki` | `warn` | "Şunu belirtmek önemlidir ki bu bir hatadır." | Calque of "it is important that". Use "...belirtmek gerekir" or "...önem taşır". |
 | `TD005` | `konusunda-yigilmasi` | `warn` | "Veri güvenliği konusunda ve mimari konusundaki..." | Avoid stacking "...konusunda" ("regarding"). Use "-e dair" or direct case endings. |
 | `TD006` | `sahip-olmak` | `warn` | "Bu cihaz yüksek bir hıza sahiptir." | Calque of "to have". Use possessive suffixes or "vardır / bulunur". |

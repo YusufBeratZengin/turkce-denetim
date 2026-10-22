@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `python -m turkce_denetim` entry point.
+
+### Fixed
+- Far fewer false positives on natural Turkish: `TD001` (only separated "ile birlikte", now `info`), `TD002`/`TD003` (sentence-initial only), `TD006` ("sahip olmak"/"sahip çıkmak"), `TD007` (active verbs such as "kullanıyor", "gülüyor"), `TD008`, `TD011` (cliché domains only), `TD012` ("bir yolculuğa çıktık"), `TD015` (name lists), `TD016` ("Bu ..." openers) and `TD021` ("grupta", "kulüpte", "Bende bir sorun var").
+- `Config(min_severity="warn")` with a plain string silently dropped errors; it is now converted to `Severity`.
+- Directory scan skipped everything when a parent folder was named `build`, `env`, etc.
+- Non-UTF-8 files are decoded as Windows-1254 instead of Latin-1.
+- Paragraphs separated only by a fenced code block were merged into one.
+- Messages and suggestions now use proper Turkish characters.
+
 ## [0.1.0] - 2026-10-22
 
 ### Added
