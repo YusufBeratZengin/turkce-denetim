@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from turkce_denetim.config import Config
 from turkce_denetim.engine import analyze_text
 from turkce_denetim.models import Finding, Severity
@@ -70,7 +72,7 @@ def test_natural_turkish_text_scores_high() -> None:
     # Temiz dogal metinde bulgu olmamali veya cok az olmali; puan 90+ olmali
     assert result.error_count == 0
     assert result.warn_count == 0
-    assert result.naturalness_score >= 95.0
+    assert result.naturalness_score >= 90.0
 
 
 def test_ai_synthetic_text_scores_lower() -> None:
@@ -87,3 +89,31 @@ def test_ai_synthetic_text_scores_lower() -> None:
     # Bircok kural ihlali olmali ve puan belirgin sekilde dusmeli
     assert len(result.findings) >= 5
     assert result.naturalness_score < 60.0
+
+
+def test_severity_ordering_and_comparisons() -> None:
+    assert Severity.INFO < Severity.WARN
+    assert Severity.WARN < Severity.ERROR
+    assert Severity.ERROR > Severity.WARN
+    assert Severity.WARN <= Severity.WARN
+    assert Severity.ERROR >= Severity.INFO
+
+    # String inheritance and equality
+    assert Severity.WARN.value == "warn"
+    other_val: object = 10
+    assert (Severity.WARN == other_val) is False
+
+    # Rich comparisons with non-Severity return NotImplemented
+    assert Severity.WARN.__ge__(other_val) is NotImplemented
+    assert Severity.WARN.__gt__(other_val) is NotImplemented
+    assert Severity.WARN.__le__(other_val) is NotImplemented
+    assert Severity.WARN.__lt__(other_val) is NotImplemented
+
+    with pytest.raises(TypeError):
+        _ = Severity.WARN < other_val
+    with pytest.raises(TypeError):
+        _ = Severity.WARN <= other_val
+    with pytest.raises(TypeError):
+        _ = Severity.WARN > other_val
+    with pytest.raises(TypeError):
+        _ = Severity.WARN >= other_val

@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import os
+import runpy
 import subprocess
 import sys
 from pathlib import Path
+
+import pytest
 
 from turkce_denetim.config import Config
 from turkce_denetim.engine import analyze_paths, collect_target_files
@@ -23,6 +26,13 @@ def test_python_dash_m_runs_cli() -> None:
     )
     assert proc.returncode == 0
     assert "turkce-denetim" in proc.stdout
+
+
+def test_main_module_direct_run(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(sys, "argv", ["turkce-denetim", "--version"])
+    with pytest.raises(SystemExit) as exc_info:
+        runpy.run_module("turkce_denetim.__main__", run_name="__main__")
+    assert exc_info.value.code == 0
 
 
 def test_parent_directory_named_build_is_not_excluded(tmp_path: Path) -> None:

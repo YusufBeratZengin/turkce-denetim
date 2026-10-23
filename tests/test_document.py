@@ -34,6 +34,15 @@ def test_mask_inline_code() -> None:
     assert "kodu vardir." in masked
 
 
+def test_mask_html_comments() -> None:
+    text = "Giriş metni.\n<!-- Gizli yorum satırı\nve devamı -->\nSonuç metni."
+    masked = mask_markdown_code(text)
+    assert "Gizli yorum" not in masked
+    assert masked.count("\n") == text.count("\n")
+    assert "Giriş metni." in masked
+    assert "Sonuç metni." in masked
+
+
 def test_parse_document_paragraphs_and_sentences() -> None:
     text = (
         "Birinci paragraf. Prof. Dr. Ahmet Bey geldi.\n\n"
@@ -49,3 +58,18 @@ def test_parse_document_paragraphs_and_sentences() -> None:
     # 'Birinci paragraf.' ve 'Prof. Dr. Ahmet Bey geldi.' -> 2 cumle
     assert len(first_p.sentences) == 2
     assert "Prof. Dr. Ahmet Bey" in first_p.sentences[1].text
+
+
+def test_parse_document_numbers_and_unpunctuated_lines() -> None:
+    text = "Sürüm 3.14 yayınlandı. Bu son satır noktalamasız"
+    doc = parse_document(text)
+    assert len(doc.sentences) == 2
+    assert "3.14" in doc.sentences[0].text
+    assert doc.sentences[1].text == "Bu son satır noktalamasız"
+
+
+def test_parse_empty_document() -> None:
+    doc = parse_document("")
+    assert doc.word_count == 0
+    assert len(doc.sentences) == 0
+    assert len(doc.paragraphs) == 0

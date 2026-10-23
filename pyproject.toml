@@ -51,6 +51,7 @@ Changelog = "https://github.com/YusufBeratZengin/turkce-denetim/blob/main/CHANGE
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
     "ruff>=0.4.0",
     "mypy>=1.10.0",
     "build",
@@ -110,7 +111,15 @@ no_implicit_reexport = true
 minversion = "8.0"
 testpaths = ["tests"]
 pythonpath = ["src"]
-addopts = "-ra -q"
+addopts = "-ra -q --cov=turkce_denetim --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["turkce_denetim"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 85
 
 [tool.turkce-denetim]
 min_severity = "info"

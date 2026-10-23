@@ -40,3 +40,4 @@ def test_turkish_casefold() -> None:
 def test_turkish_title() -> None:
     assert turkish_title("istanbul ve ışık") == "İstanbul Ve Işık"
     assert turkish_title("türkçe denetim aracı") == "Türkçe Denetim Aracı"
+    assert turkish_title("istanbul   ışık") == "İstanbul   Işık"

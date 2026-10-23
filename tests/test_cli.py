@@ -198,3 +198,32 @@ def test_cli_missing_config_file(capsys: pytest.CaptureFixture[str]) -> None:
     assert "Yapılandırma hatası" in captured.err
     assert "bulunamadı" in captured.err
     assert "Traceback" not in captured.err
+
+
+def test_cli_no_targets_json(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    empty_dir = tmp_path / "empty"
+    empty_dir.mkdir()
+    exit_code = main([str(empty_dir), "--format", "json"])
+    assert exit_code == 0
+    captured = capsys.readouterr()
+    data = json.loads(captured.out)
+    assert data["files"] == []
+
+
+def test_cli_no_targets_sarif(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    empty_dir = tmp_path / "empty"
+    empty_dir.mkdir()
+    exit_code = main([str(empty_dir), "--format", "sarif"])
+    assert exit_code == 0
+    captured = capsys.readouterr()
+    data = json.loads(captured.out)
+    assert data["version"] == "2.1.0"
+
+
+def test_cli_no_targets_text(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    empty_dir = tmp_path / "empty"
+    empty_dir.mkdir()
+    exit_code = main([str(empty_dir)])
+    assert exit_code == 0
+    captured = capsys.readouterr()
+    assert "Uyarı: Denetlenecek geçerli" in captured.err

@@ -123,3 +123,110 @@ max_sentence_words = -5
     with pytest.raises(ConfigError) as exc_info:
         load_config_from_file(cfg_file)
     assert "pozitif" in str(exc_info.value)
+
+
+def test_malformed_toml_syntax_raises_config_error(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "malformed.toml"
+    cfg_file.write_text("tool = { turkce-denetim = [unclosed", encoding="utf-8")
+    with pytest.raises(ConfigError) as exc_info:
+        load_config_from_file(cfg_file)
+    assert "Geçersiz TOML sözdizimi" in str(exc_info.value)
+
+
+def test_section_not_dict_raises_config_error(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "not_dict.toml"
+    cfg_file.write_text(
+        """
+[tool]
+turkce-denetim = "not-a-table"
+""",
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError) as exc_info:
+        load_config_from_file(cfg_file)
+    assert "bir tablo (dict) olmalıdır" in str(exc_info.value)
+
+
+def test_disable_as_comma_separated_string(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "string_disable.toml"
+    cfg_file.write_text(
+        """
+[tool.turkce-denetim]
+disable = "TD001, TD002"
+""",
+        encoding="utf-8",
+    )
+    config = load_config_from_file(cfg_file)
+    assert set(config.disable) == {"TD001", "TD002"}
+
+
+def test_disable_with_non_string_items_raises_config_error(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "bad_items.toml"
+    cfg_file.write_text(
+        """
+[tool.turkce-denetim]
+disable = [123, 456]
+""",
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError) as exc_info:
+        load_config_from_file(cfg_file)
+    assert "metin olmalıdır" in str(exc_info.value)
+
+
+def test_disable_with_wrong_type_raises_config_error(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "bad_type.toml"
+    cfg_file.write_text(
+        """
+[tool.turkce-denetim]
+disable = 123
+""",
+        encoding="utf-8",
+    )
+    with pytest.raises(ConfigError) as exc_info:
+        load_config_from_file(cfg_file)
+    assert "liste veya virgülle ayrılmış" in str(exc_info.value)
+
+
+def test_parse_simple_toml_table_standalone() -> None:
+    from turkce_denetim.config import _parse_simple_toml_table
+
+    sample = """
+# Baştaki yorum
+[other.table]
+ignored = 1
+
+[tool.turkce-denetim]
+min_severity = "warn"
+single_quoted = 'test'
+is_active = true
+is_disabled = false
+count = 42
+negative = -10
+ratio = 3.14
+empty_list = []
+items = ["a", 'b', c]
+raw = unquoted_text
+"""
+    parsed = _parse_simple_toml_table(sample, "tool.turkce-denetim")
+    assert parsed["min_severity"] == "warn"
+    assert parsed["single_quoted"] == "test"
+    assert parsed["is_active"] is True
+    assert parsed["is_disabled"] is False
+    assert parsed["count"] == 42
+    assert parsed["negative"] == -10
+    assert parsed["ratio"] == 3.14
+    assert parsed["empty_list"] == []
+    assert parsed["items"] == ["a", "b", "c"]
+    assert parsed["raw"] == "unquoted_text"
+
+
+def test_find_and_load_config_fallback(tmp_path: Path) -> None:
+    from turkce_denetim.config import find_and_load_config
+
+    empty_dir = tmp_path / "isolated"
+    empty_dir.mkdir()
+    # Mocking cwd/parent walk where no pyproject.toml exists
+    cfg = find_and_load_config(start_dir=empty_dir)
+    assert cfg is not None
+    assert cfg.min_severity.value in ("info", "warn", "error")
