@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Paragraphs separated only by a fenced code block were merged into one.
 - Messages and suggestions now use proper Turkish characters.
 
-## [0.1.0] - 2026-10-22
+## [0.1.0] - 2026-10-23
 
 ### Added
 - Rule engine with zero runtime dependencies (Python standard library only).
