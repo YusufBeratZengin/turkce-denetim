@@ -1,0 +1,42 @@
+name: Feature Request
+description: Suggest an idea, enhancement, or new linguistic rule
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an improvement or new rule for `turkce-denetim`!
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Motivation
+      description: Is your feature request related to a problem or missing pattern?
+      placeholder: A clear description of what is lacking...
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution or Rule Logic
+      description: Describe what you would like to happen or the pattern detection rule.
+      placeholder: Detail the heuristic, regex, or check...
+    validations:
+      required: true
+  - type: textarea
+    id: example-text
+    attributes:
+      label: Example Turkish Sentences
+      description: Provide sample sentences that should be detected or affected.
+      placeholder: |
+        Problematic: "..."
+        Suggested correction: "..."
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context & Linguistic Sources
+      description: References to TDK, academic style guides, or corpus examples.
+    validations:
+      required: false

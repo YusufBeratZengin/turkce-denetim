@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.10", "3.12"]
         include:
           - os: ubuntu-latest
@@ -46,8 +46,8 @@ jobs:
       - name: Type check (mypy)
         run: mypy src tests
 
-      - name: Run unit test suite (pytest)
-        run: pytest
+      - name: Run unit test suite (pytest with coverage)
+        run: pytest --cov=turkce_denetim --cov-report=term-missing
 
       - name: Smoke test CLI
         run: |

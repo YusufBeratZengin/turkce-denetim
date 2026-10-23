@@ -1,0 +1,61 @@
+name: Bug Report
+description: File a bug report or unexpected behavior
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue with `turkce-denetim`!
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe what happened...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: What CLI command or Python API call was run?
+      placeholder: |
+        1. Run `turkce-denetim sample.md`
+        2. See error ...
+      value: |
+        ```bash
+        turkce-denetim input.md
+        ```
+    validations:
+      required: true
+  - type: textarea
+    id: actual-output
+    attributes:
+      label: Actual Output
+      description: What was the actual output or traceback?
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating System, Python version, turkce-denetim version
+      placeholder: Linux / Windows / macOS, Python 3.12, turkce-denetim 0.1.0
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
+    validations:
+      required: false

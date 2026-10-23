@@ -1,0 +1,47 @@
+name: False Positive Report
+description: Report a rule that flagged natural, correct Turkish text incorrectly
+title: "[FALSE POSITIVE]: "
+labels: ["false-positive"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us reduce false positives in `turkce-denetim`!
+  - type: input
+    id: rule-id
+    attributes:
+      label: Rule ID
+      description: Which rule was incorrectly triggered?
+      placeholder: e.g. TD001, TD003, TD021
+    validations:
+      required: true
+  - type: textarea
+    id: sample-text
+    attributes:
+      label: Short Natural Sentence
+      description: The minimal natural sentence that triggered the false positive.
+      placeholder: Enter your natural Turkish sentence here...
+    validations:
+      required: true
+  - type: textarea
+    id: justification
+    attributes:
+      label: Why is this natural Turkish?
+      description: Explain why this usage is legitimate, idiomatic, or standard in this context.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Actual CLI Output
+      description: Paste the finding output here.
+      render: shell
+    validations:
+      required: false
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      placeholder: Python 3.12, turkce-denetim 0.1.0
+    validations:
+      required: false
