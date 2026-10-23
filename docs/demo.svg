@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 514" width="100%" height="auto" style="max-width: 880px;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <!-- Terminal Background -->
+    <rect x="0" y="0" width="880" height="514" rx="10" ry="10" fill="#1e1e2e" stroke="#313244" stroke-width="1"/>
+
+    <!-- Title Bar -->
+    <rect x="0" y="0" width="880" height="38" rx="10" ry="10" fill="#181825"/>
+    <rect x="0" y="28" width="880" height="10" fill="#181825"/>
+    <line x1="0" y1="38" x2="880" y2="38" stroke="#313244" stroke-width="1"/>
+
+    <!-- Window Controls (Red, Yellow, Green dots) -->
+    <circle cx="20" cy="19" r="6" fill="#f38ba8"/>
+    <circle cx="40" cy="19" r="6" fill="#f9e2af"/>
+    <circle cx="60" cy="19" r="6" fill="#a6e3a1"/>
+
+    <!-- Window Title -->
+    <text x="440.0" y="23" fill="#a6adc8" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" font-weight="bold" text-anchor="middle">turkce-denetim — bash</text>
+  </g>
+
+  <!-- Terminal Content -->
+  <g font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" font-size="13px">
+    <text x="24" y="67" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="bold">$ </tspan><tspan fill="#cdd6f4" font-weight="bold">turkce-denetim examples/bad.md</tspan></text>
+    <text x="24" y="87" xml:space="preserve"><tspan fill="#7f849c">examples/bad.md:1:1:</tspan> <tspan fill="#f9e2af" font-weight="bold">warn </tspan> <tspan fill="#cba6f7">[TD008]</tspan> <tspan fill="#cdd6f4">Metin başında dalkavukça yapay zekâ açılışı tespit edildi (&#x27;Elbette!&#x27;).</tspan></text>
+    <text x="24" y="107" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="bold">    öneri:</tspan><tspan fill="#9399b2" font-style="italic"> Dalkavukça açılış yerine doğrudan konuya veya bilgiye girin.</tspan></text>
+    <text x="24" y="127" xml:space="preserve"><tspan fill="#7f849c">examples/bad.md:1:74:</tspan> <tspan fill="#89dceb" font-weight="bold">info </tspan> <tspan fill="#cba6f7">[TD001]</tspan> <tspan fill="#cdd6f4">&#x27;gelişmesi ile birlikte&#x27; kalıbı çeviri kokusu taşıyabilir; daha yalın bağlaçlar tercih edilebilir.</tspan></text>
+    <text x="24" y="147" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="bold">    öneri:</tspan><tspan fill="#9399b2" font-style="italic"> &#x27;ile birlikte&#x27; yerine &#x27;ile&#x27;, &#x27;bunun yanında&#x27;, &#x27;ayrıca&#x27; veya yalın ek kullanın.</tspan></text>
+    <text x="24" y="167" xml:space="preserve"><tspan fill="#7f849c">examples/bad.md:3:1:</tspan> <tspan fill="#89dceb" font-weight="bold">info </tspan> <tspan fill="#cba6f7">[TD002]</tspan> <tspan fill="#cdd6f4">Cümle başında &#x27;Bu noktada&#x27; dolgu ifadesi tespit edildi.</tspan></text>
+    <text x="24" y="187" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="bold">    öneri:</tspan><tspan fill="#9399b2" font-style="italic"> &#x27;Bu noktada&#x27; yerine &#x27;burada&#x27;, &#x27;bu aşamada&#x27; veya doğrudan konuya giren bir ifade tercih edin.</tspan></text>
+    <text x="24" y="207" xml:space="preserve"><tspan fill="#7f849c">examples/bad.md:3:12:</tspan> <tspan fill="#f9e2af" font-weight="bold">warn </tspan> <tspan fill="#cba6f7">[TD012]</tspan> <tspan fill="#cdd6f4">&#x27;dijital dönüşüm yolculuğumuz&#x27; klişesi yapay zekâ metinlerinde soyut &#x27;journey&#x27; çevirisidir.</tspan></text>
+    <text x="24" y="227" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="bold">    öneri:</tspan><tspan fill="#9399b2" font-style="italic"> &#x27;Yolculuk&#x27; metaforu yerine &#x27;süreci&#x27;, &#x27;adımları&#x27; veya somut aşamaları yazın.</tspan></text>
+    <text x="24" y="247" xml:space="preserve"><tspan fill="#7f849c">examples/bad.md:3:75:</tspan> <tspan fill="#89dceb" font-weight="bold">info </tspan> <tspan fill="#cba6f7">[TD013]</tspan> <tspan fill="#cdd6f4">&#x27;derinlemesine incelemek&#x27; ifadesi yapay zekânın sık kullandığı abartılı bir dolgudur.</tspan></text>
+    <text x="24" y="267" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="bold">    öneri:</tspan><tspan fill="#9399b2" font-style="italic"> &#x27;Derinlemesine&#x27; yerine &#x27;ayrıntılı biçimde&#x27;, &#x27;kapsamlıca&#x27; veya doğrudan eylemin kendisini yazın.</tspan></text>
+    <text x="24" y="287" xml:space="preserve"><tspan fill="#7f849c">examples/bad.md:3:103:</tspan> <tspan fill="#f9e2af" font-weight="bold">warn </tspan> <tspan fill="#cba6f7">[TD004]</tspan> <tspan fill="#cdd6f4">&#x27;önemlidir ki&#x27; kalıbı İngilizce &#x27;it is important that&#x27; çevirisidir.</tspan></text>
+    <text x="24" y="307" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="bold">    öneri:</tspan><tspan fill="#9399b2" font-style="italic"> &#x27;...önemlidir ki&#x27; yerine &#x27;...belirtmek gerekir&#x27;, &#x27;...önem taşır&#x27; veya doğrudan yargı cümlesi kurun.</tspan></text>
+    <text x="24" y="327" xml:space="preserve"><tspan fill="#7f849c">examples/bad.md:5:14:</tspan> <tspan fill="#f38ba8" font-weight="bold">error</tspan> <tspan fill="#cba6f7">[TD023]</tspan> <tspan fill="#cdd6f4">&#x27;herşey&#x27; yazımı hatalı; doğrusu &#x27;her şey&#x27; olmalıdır.</tspan></text>
+    <text x="24" y="347" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="bold">    öneri:</tspan><tspan fill="#9399b2" font-style="italic"> her şey</tspan></text>
+    <text x="24" y="387" xml:space="preserve"><tspan fill="#89b4fa" font-weight="bold">--- Denetim Özeti ---</tspan></text>
+    <text x="24" y="407" xml:space="preserve"><tspan fill="#a6adc8">Taranan belge sayısı :</tspan><tspan fill="#cdd6f4" font-weight="bold"> 1</tspan></text>
+    <text x="24" y="427" xml:space="preserve"><tspan fill="#a6adc8">Toplam kelime sayısı :</tspan><tspan fill="#cdd6f4" font-weight="bold"> 39</tspan></text>
+    <text x="24" y="447" xml:space="preserve"><tspan fill="#a6adc8">Bulgular             :</tspan><tspan fill="#cdd6f4" font-weight="bold"> 1 hata, 3 uyarı, 3 bilgi (toplam 7)</tspan></text>
+    <text x="24" y="467" xml:space="preserve"><tspan fill="#a6adc8">Kural dağılımı       :</tspan><tspan fill="#cdd6f4" font-weight="bold"> TD001: 1, TD002: 1, TD004: 1, TD008: 1, TD012: 1, TD013: 1, TD023: 1</tspan></text>
+    <text x="24" y="487" xml:space="preserve"><tspan fill="#fab387" font-weight="bold">Doğallık Puanı       :</tspan><tspan fill="#f9e2af" font-weight="bold"> 60.0 / 100 (Orta (Belirgin yapay zekâ veya çeviri kokusu))</tspan></text>
+  </g>
+</svg>
