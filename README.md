@@ -1,8 +1,41 @@
 # turkce-denetim
 
-A rule-based (no LLM, zero runtime dependencies) Turkish text linter and CLI for detecting AI-generated text smells, translation artifacts, and orthographic inconsistencies.
+> A rule-based (no LLM, zero runtime dependencies) Turkish text linter and CLI for detecting AI-generated text smells, translation artifacts, and orthographic inconsistencies.
+
+[![CI](https://github.com/YusufBeratZengin/turkce-denetim/actions/workflows/ci.yml/badge.svg)](https://github.com/YusufBeratZengin/turkce-denetim/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/turkce-denetim.svg)](https://pypi.org/project/turkce-denetim/)
+[![Python Version](https://img.shields.io/pypi/pyversions/turkce-denetim.svg)](https://pypi.org/project/turkce-denetim/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [Türkçe Dokümantasyon için tıklayınız (README.tr.md)](README.tr.md)
+
+---
+
+<p align="center">
+  <img src="docs/demo.svg" alt="turkce-denetim terminal demo" width="860">
+</p>
+
+---
+
+## Why turkce-denetim?
+
+- **Zero Runtime Dependencies & Deterministic**: Runs entirely on the Python Standard Library (Python >= 3.10) with instant startup, zero cloud API fees or tokens, and 100% reproducible results free from LLM drift or hallucination.
+- **Engineered for Turkish Morphology**: Built specifically for Turkish linguistics—native dotted/dotless I (`İ/i` and `I/ı`) casing, custom suffix stripping for repetition detection, and curated rules flagging calques ("sahip olmak", "...ile birlikte", "...noktasında") and LLM tropes ("Elbette!", "...dünyasında", "yolculuk").
+- **Developer-Native & CI-Ready**: Comes with ANSI color terminal diagnostics, machine-readable JSON, native SARIF 2.1.0 export for GitHub Code Scanning, pre-commit integration, and a normalized Naturalness Score (0-100).
+
+---
+
+## Quick Start
+
+Install via pip and lint your Markdown or text files immediately:
+
+```bash
+# Install the package
+pip install turkce-denetim
+
+# Lint a file or directory
+turkce-denetim document.md
+```
 
 ---
 
@@ -19,30 +52,10 @@ A rule-based (no LLM, zero runtime dependencies) Turkish text linter and CLI for
 - **25 Specialized Rules**: Categorized across translation calques, AI-specific tropes, readability indicators, and high-confidence orthography.
 - **Accurate Turkish Case Handling**: Native support for dotted and dotless I (`İ/i` and `I/ı`) across all casing transformations.
 - **Turkish Stemmer**: Suffix stripper designed for Turkish agglutinative morphology to detect proximity stem repetitions without external NLP packages.
-- **Markdown-Aware**: Masks fenced code blocks (```` ``` ```` and `~~~`) and inline code (`` `...` ``) with spaces so that code contents are ignored while exact line and column coordinates are preserved.
-- **Multiple Output Formats**: Human-readable terminal output with optional ANSI colors, machine-parsable JSON (`--format json`), and SARIF 2.1.0 (`--format sarif`) for GitHub Code Scanning.
+- **Markdown-Aware**: Masks fenced code blocks (```` ``` ```` and `~~~`), HTML comments (`<!-- ... -->`), and inline code (`` `...` ``) with spaces so that code contents are ignored while exact line and column coordinates are preserved.
+- **Multiple Output Formats**: Human-readable terminal output with ANSI colors, machine-parsable JSON (`--format json`), and SARIF 2.1.0 (`--format sarif`) for GitHub Code Scanning.
 - **Naturalness Score (0-100)**: Transparent, normalized metric measuring the stylistic density of detected patterns per 100 words.
 - **Configurable**: Configurable via `pyproject.toml` (`[tool.turkce-denetim]`) or command-line options (`--disable`, `--min-severity`).
-
----
-
-## Installation
-
-Install using pip:
-
-```bash
-pip install turkce-denetim
-```
-
-For local development:
-
-```bash
-git clone https://github.com/YusufBeratZengin/turkce-denetim.git
-cd turkce-denetim
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .\.venv\Scripts\activate
-pip install -e ".[dev]"
-```
 
 ---
 
@@ -105,7 +118,7 @@ turkce-denetim --list-rules
 | `1` | Linting errors found: one or more `error`-severity findings detected (e.g. spelling or grammar violations). |
 | `2` | Usage, configuration, or I/O error: invalid CLI arguments, unreadable files, or malformed TOML configuration. |
 
-### Live Demo
+### Live Demo Output
 
 ```bash
 $ turkce-denetim examples/bad.md --no-color
@@ -130,6 +143,83 @@ Toplam kelime sayısı : 39
 Bulgular             : 1 hata, 3 uyarı, 3 bilgi (toplam 7)
 Kural dağılımı       : TD001: 1, TD002: 1, TD004: 1, TD008: 1, TD012: 1, TD013: 1, TD023: 1
 Doğallık Puanı       : 60.0 / 100 (Orta (Belirgin yapay zekâ veya çeviri kokusu))
+```
+
+---
+
+## Python API
+
+You can integrate `turkce-denetim` directly into your Python scripts and services:
+
+```python
+from turkce_denetim import Config, analyze_text
+
+content = "Bu noktada konuyu derinlemesine incelemek çok önemlidir ki sonuç alalım."
+config = Config(min_severity="warn")
+
+result = analyze_text(content, config)
+
+print(f"Word count : {result.word_count}")
+print(f"Naturalness: {result.naturalness_score} / 100")
+
+for finding in result.findings:
+    print(f"L{finding.line}:{finding.column} [{finding.rule_id}] {finding.message}")
+    if finding.suggestion:
+        print(f"  Suggestion: {finding.suggestion}")
+```
+
+---
+
+## Pre-commit Integration
+
+Add `turkce-denetim` to your `.pre-commit-config.yaml` to lint markdown and text files automatically before each commit:
+
+```yaml
+repos:
+  - repo: https://github.com/YusufBeratZengin/turkce-denetim
+    rev: v0.1.0
+    hooks:
+      - id: turkce-denetim
+```
+
+---
+
+## GitHub Actions CI Integration
+
+To inspect pull requests and upload findings directly into GitHub Code Scanning (SARIF tab):
+
+```yaml
+name: Text Quality
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-text:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install turkce-denetim
+        run: pip install turkce-denetim
+
+      - name: Run linter and generate SARIF
+        run: turkce-denetim . --format sarif > results.sarif
+        continue-on-error: true
+
+      - name: Upload SARIF report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
 ```
 
 ---
@@ -211,7 +301,7 @@ The Naturalness Score is a bounded metric ($0.0 - 100.0$) that measures pattern 
 
 ## Configuration
 
-You can configure `turkce-denetim` in your repository's `pyproject.toml` file:
+You can configure `turkce-denetim` in your repository's `pyproject.toml` file under `[tool.turkce-denetim]`:
 
 ```toml
 [tool.turkce-denetim]
@@ -225,84 +315,45 @@ disable = ["TD001", "TD014"]
 max_sentence_words = 35
 max_paragraph_words = 120
 max_commas_per_sentence = 5
+max_passive_per_sentence = 3
 min_word_repetition = 3
 ```
 
 ---
 
-## GitHub Actions CI Integration
+## FAQ & Limitations
 
-To inspect pull requests and upload results directly into GitHub Code Scanning:
+### Does a low score prove a text was written by an LLM?
+**No.** `turkce-denetim` identifies stylistic habits, translation calques, and repetition metrics commonly seen in model outputs and mechanical translations. Skilled human writers occasionally use these phrases, and AI-generated text can be post-edited to achieve a 100 score. The Naturalness Score is an advisory diagnostic tool, not an authorship watermark.
 
-```yaml
-name: Text Quality
+### Can it run completely offline and in air-gapped systems?
+**Yes.** `turkce-denetim` has zero external runtime dependencies and makes zero network calls. It runs locally and securely on any machine with Python >= 3.10.
 
-on:
-  pull_request:
-    branches: [main]
+### What file formats are supported?
+`turkce-denetim` processes Markdown (`.md`) and plain text (`.txt`) files. When parsing Markdown, code blocks (```` ``` ````, `~~~`), HTML comments (`<!-- ... -->`), and inline code (`` `...` ``) are masked with whitespace so that code snippets do not trigger false positives while preserving line and column coordinates.
 
-jobs:
-  lint-text:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install turkce-denetim
-        run: pip install turkce-denetim
-
-      - name: Run linter and generate SARIF
-        run: turkce-denetim . --format sarif > results.sarif
-        continue-on-error: true
-
-      - name: Upload SARIF report
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: results.sarif
-```
+### How does it handle Turkish dotted and dotless I?
+Turkish uppercase `I` becomes lowercase `ı`, and uppercase `İ` becomes lowercase `i`. Standard library lowercase routines often mishandle this depending on system locale. `turkce-denetim` incorporates dedicated, locale-independent Turkish casing and casefolding algorithms.
 
 ---
 
-## Pre-commit Integration
+## Contributing
 
-Add `turkce-denetim` to your `.pre-commit-config.yaml` to lint markdown and text files before committing:
+Contributions are very welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for full setup instructions, testing guidelines, and code style standards.
 
-```yaml
-repos:
-  - repo: https://github.com/YusufBeratZengin/turkce-denetim
-    rev: v0.1.0
-    hooks:
-      - id: turkce-denetim
-```
+```bash
+# Clone and setup local development environment
+git clone https://github.com/YusufBeratZengin/turkce-denetim.git
+cd turkce-denetim
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .\.venv\Scripts\activate
+pip install -e ".[dev]"
 
----
-
-## Python API
-
-You can integrate `turkce-denetim` directly into your Python workflows:
-
-```python
-from turkce_denetim import Config, analyze_text
-
-content = "Bu noktada konuyu derinlemesine incelemek çok önemlidir ki sonuç alalım."
-config = Config(min_severity="warn")
-
-result = analyze_text(content, config)
-
-print(f"Word count : {result.word_count}")
-print(f"Naturalness: {result.naturalness_score} / 100")
-
-for finding in result.findings:
-    print(f"L{finding.line}:{finding.column} [{finding.rule_id}] {finding.message}")
-    if finding.suggestion:
-        print(f"  Suggestion: {finding.suggestion}")
+# Run tests and linting
+pytest
+ruff check .
+ruff format --check .
+mypy src tests
 ```
 
 ---

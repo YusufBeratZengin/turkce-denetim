@@ -1,8 +1,41 @@
 # turkce-denetim
 
-Türkçe metinlerdeki yapay zekâ kokusunu, çeviri kalıplarını ve yazım sorunlarını bulan bir yazı denetleyici (linter) ve komut satırı aracı. Kurallara dayanır, dil modeli kullanmaz, kurulumda ek paket istemez.
+> Türkçe metinlerdeki yapay zekâ kokusunu, çeviri kalıplarını ve yazım sorunlarını bulan kural tabanlı yazı denetleyicisi (linter) ve komut satırı aracı.
+
+[![CI](https://github.com/YusufBeratZengin/turkce-denetim/actions/workflows/ci.yml/badge.svg)](https://github.com/YusufBeratZengin/turkce-denetim/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/turkce-denetim.svg)](https://pypi.org/project/turkce-denetim/)
+[![Python Version](https://img.shields.io/pypi/pyversions/turkce-denetim.svg)](https://pypi.org/project/turkce-denetim/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 [English Documentation (README.md)](README.md)
+
+---
+
+<p align="center">
+  <img src="docs/demo.svg" alt="turkce-denetim terminal demosu" width="860">
+</p>
+
+---
+
+## Neden turkce-denetim?
+
+- **Sıfır Dış Bağımlılık ve Deterministik Çalışma**: Yalnızca Python standart kütüphanesini kullanır (Python >= 3.10); API anahtarı, bulut faturası, ağ gecikmesi veya yapay zekâ model sapmaları olmadan her seferinde birebir tutarlı ve anında sonuç üretir.
+- **Türkçe Morfolojisine ve Dilbilgisine Özel**: `İ/i` ve `I/ı` dönüşümlerini işletim sisteminden bağımsız doğru yapar, gövde budayıcı (stemmer) ile yakın kök tekrarlarını yakalar; İngilizce çeviri kokularını ("sahip olmak", "...ile birlikte", "...noktasında") ve üretken dil modellerinin basmakalıplarını ("Elbette!", "...dünyasında", "yolculuk") hassas kurallarla süzgeçten geçirir.
+- **Geliştirici Dostu ve CI Entegrasyonuna Hazır**: Renkli terminal arayüzü, betikler için JSON ve GitHub Code Scanning ile tam uyumlu SARIF 2.1.0 çıktısı üretir; pre-commit kancalarıyla geliştirme akışınıza zahmetsizce eklenir.
+
+---
+
+## Hızlı Başlangıç
+
+Pip ile kurup Markdown veya metin dosyalarınızı hemen denetleyin:
+
+```bash
+# Paketi yükleyin
+pip install turkce-denetim
+
+# Dosya veya dizini denetleyin
+turkce-denetim metin.md
+```
 
 ---
 
@@ -16,33 +49,13 @@ Türkçe metinlerdeki yapay zekâ kokusunu, çeviri kalıplarını ve yazım sor
 ## Öne Çıkan Özellikler
 
 - **Bağımlılık yok**: Yalnızca Python standart kütüphanesini kullanır (Python 3.10 ve üstü).
-- **25 kural**: Çeviri kalıpları, yapay zekâ basmakalıpları, okunabilirlik ve yazım.
-- **Doğru büyük/küçük harf**: `İ/i` ve `I/ı` ayrımını Türkçe kurallarına göre yapar.
-- **Ek budayıcı (stemmer)**: Aynı kökten gelen sözcüklerin bir cümlede fazla tekrarlanmasını, dış paket kullanmadan yakalar.
-- **Markdown bilir**: Kod bloklarını (```` ``` ```` ve `~~~`) ve satır içi kodu (`` `...` ``) boşlukla maskeler; satır ve sütun numaraları bozulmaz.
-- **Üç çıktı biçimi**: Renkli terminal çıktısı, JSON (`--format json`) ve GitHub Code Scanning için SARIF 2.1.0 (`--format sarif`).
-- **Doğallık puanı (0-100)**: Bulguların yüz sözcüğe düşen ağırlığından hesaplanır; formül aşağıda açık yazılı.
-- **Ayarlanabilir**: `pyproject.toml` içindeki `[tool.turkce-denetim]` bölümünden ya da `--disable` ve `--min-severity` bayraklarından.
-
----
-
-## Kurulum
-
-Pip ile yükleme:
-
-```bash
-pip install turkce-denetim
-```
-
-Geliştirici ortamı kurulumu:
-
-```bash
-git clone https://github.com/YusufBeratZengin/turkce-denetim.git
-cd turkce-denetim
-python -m venv .venv
-source .venv/bin/activate  # Windows için: .\.venv\Scripts\activate
-pip install -e ".[dev]"
-```
+- **25 kural**: Çeviri kalıpları, yapay zekâ basmakalıpları, okunabilirlik ve yazım kuralları.
+- **Doğru büyük/küçük harf**: `İ/i` ve `I/ı` ayrımını Türkçe kurallarına göre eksiksiz yapar.
+- **Ek budayıcı (stemmer)**: Aynı kökten gelen sözcüklerin bir cümlede fazla tekrarlanmasını, dış NLP paketi kullanmadan yakalar.
+- **Markdown bilir**: Kod bloklarını (```` ``` ```` ve `~~~`), HTML yorumlarını (`<!-- ... -->`) ve satır içi kodu (`` `...` ``) boşlukla maskeler; satır ve sütun numaraları tam korunur.
+- **Çoklu çıktı biçimi**: Renkli terminal çıktısı, JSON (`--format json`) ve GitHub Code Scanning için SARIF 2.1.0 (`--format sarif`).
+- **Doğallık puanı (0-100)**: Bulguların yüz sözcüğe düşen ağırlığından hesaplanır; formül aşağıda şeffaf biçimde açıklanmıştır.
+- **Esnek yapılandırma**: `pyproject.toml` içindeki `[tool.turkce-denetim]` bölümünden ya da `--disable` ve `--min-severity` bayraklarından yönetilebilir.
 
 ---
 
@@ -54,29 +67,29 @@ pip install -e ".[dev]"
 # Bulunduğun dizindeki tüm .md ve .txt dosyalarını denetle
 turkce-denetim
 
-# Komut PATH'te değilse aynısı modül olarak da çalışır
-python -m turkce_denetim metin.md
-
 # Belirli bir dosya ya da dizini tara
 turkce-denetim metin.md
 turkce-denetim docs/
 
+# Komut PATH'te değilse aynısı modül olarak da çalışır
+python -m turkce_denetim metin.md
+
 # Metni standart girdiden (stdin) oku
 cat taslak.txt | turkce-denetim -
 
-# JSON çıktısı
+# JSON çıktısı al
 turkce-denetim metin.md --format json
 
-# GitHub Code Scanning için SARIF raporu
+# GitHub Code Scanning için SARIF raporu üret
 turkce-denetim docs/ --format sarif > sonuclar.sarif
 
-# Bazı kuralları kapat
+# Belirli kuralları devre dışı bırak
 turkce-denetim metin.md --disable TD001,TD005
 
 # Yalnızca warn ve error düzeyindeki bulguları göster
 turkce-denetim metin.md --min-severity warn
 
-# Sadece doğallık puanını yazdır
+# Sadece sayısal doğallık puanını yazdır
 turkce-denetim metin.md --score-only
 
 # Mevcut tüm kuralları listele
@@ -91,21 +104,21 @@ turkce-denetim --list-rules
 | `-f, --format` | Seçenek | `text` | Çıktı biçimi: `text`, `json`, `sarif`. |
 | `-d, --disable` | Metin | Yok | Kapatılacak kural kimlikleri, virgülle ayrılır (örn: `TD001,TD003`). |
 | `-s, --min-severity`| Seçenek | `info` | Gösterilecek en düşük önem: `info`, `warn`, `error`. |
-| `-c, --config` | Yol | Yok | Kendi TOML yapılandırma dosyanın yolu. |
+| `-c, --config` | Yol | Yok | Kendi TOML yapılandırma dosyanızın yolu. |
 | `--no-color` | Bayrak | False | Terminal renklerini kapatır. |
-| `--score-only` | Bayrak | False | Yalnızca doğallık puanını yazar. |
+| `--score-only` | Bayrak | False | Yalnızca sayısal doğallık puanını yazar. |
 | `--list-rules` | Bayrak | False | Mevcut tüm kuralları listeler (kimlik, ad, önem ve açıklama). |
-| `-v, --version` | Bayrak | | Sürümü yazar. |
+| `-v, --version` | Bayrak | | Program sürümünü gösterir. |
 
 ### Çıkış Kodları (Exit Codes)
 
 | Kod | Anlamı |
 |---|---|
-| `0` | Başarılı: hata (`error`) düzeyinde bulgu tespit edilmedi (metin temiz veya yalnızca `info`/`warn` önerileri içeriyor). |
-| `1` | Denetim hatası: bir veya daha fazla `error` önem derecesinde bulgu tespit edildi (örn. yazım ve bağlaç hataları). |
-| `2` | Kullanım, yapılandırma veya G/Ç (I/O) hatası: geçersiz CLI bağımsız değişkenleri, okunamayan dosyalar veya hatalı TOML yapılandırması. |
+| `0` | Başarılı: error düzeyinde bulgu yok (metin temiz ya da yalnızca info/warn önerileri var). |
+| `1` | Hata bulundu: bir veya daha fazla `error` önem düzeyinde bulgu (yazım ve imla kuralları). |
+| `2` | Kullanım, yapılandırma veya girdi/çıktı hatası: geçersiz parametre ya da hatalı TOML. |
 
-### Canlı Örnek (Live Demo)
+### Canlı Demo Çıktısı
 
 ```bash
 $ turkce-denetim examples/bad.md --no-color
@@ -134,108 +147,49 @@ Doğallık Puanı       : 60.0 / 100 (Orta (Belirgin yapay zekâ veya çeviri ko
 
 ---
 
-## Kural Kataloğu
+## Python Kütüphanesi Olarak Kullanım
 
-25 kural dört grupta toplanır. `error` düzeyinde bulgu varsa çıkış kodu 1, yoksa 0'dır.
+`turkce-denetim`'i doğrudan kendi Python betiklerinizde ve iş akışlarınızda kullanabilirsiniz:
 
-### 1. Çeviri Kalıpları (Translation Patterns)
+```python
+from turkce_denetim import Config, analyze_text
 
-| Kimlik | Kural Adı | Önem | Hatalı / Sorunlu Örnek | Düzeltme Önerisi |
-|---|---|---|---|---|
-| `TD001` | `ile-birlikte-asiri` | `info` | "Gelişmeler ile birlikte yeni imkânlar doğdu." | "Gelişmelerle birlikte" ya da "Gelişmeler sayesinde" gibi yalın bir yapı seçin. "Bununla birlikte" ve "arkadaşımla birlikte" gibi doğal kullanımlara dokunmaz. |
-| `TD002` | `bu-noktada` | `info` | "Bu noktada dikkat edilmesi gerekir." | Cümleyi "Burada" ya da "Bu aşamada" ile açın veya doğrudan konuya girin. Yalnızca cümle başındaki kullanımı yakalar. |
-| `TD003` | `gunun-sonunda` | `warn` | "Günün sonunda, karar verildi." | "At the end of the day" çevirisi yerine "sonuçta", "özünde" ya da "nihayetinde" yazın. "Günün sonunda eve döndük" gibi gerçek zaman anlatımına dokunmaz. |
-| `TD004` | `onemlidir-ki` | `warn` | "Şunu belirtmek önemlidir ki bu bir hatadır." | "It is important that" çevirisi yerine "...belirtmek gerekir" ya da "...önem taşır" deyin. |
-| `TD005` | `konusunda-yigilmasi` | `warn` | "Veri güvenliği konusunda ve mimari konusundaki..." | Aynı cümlede "konusunda" üst üste gelmesin; "-e dair", "-le ilgili" ya da yönelme eki kullanın. |
-| `TD006` | `sahip-olmak` | `warn` | "Bu model yüksek bir hıza sahiptir." | "Have" çevirisi yerine iyelik eki ("hızı yüksektir") ya da "vardır" kullanın. "Sahip olmak istiyorum" ve "sahip çıkmak" gibi doğal kullanımlara dokunmaz. |
-| `TD007` | `edilgen-yigilmasi` | `warn` | "Planlar yapıldı, bütçe onaylandı ve görevler dağıtıldı." | Aynı cümlede üç ya da daha fazla edilgen fiil varsa etken çatıya geçip özneyi görünür kılın. |
+metin = "Bu noktada konuyu derinlemesine incelemek çok önemlidir ki sonuç alalım."
+config = Config(min_severity="warn")
 
-### 2. Yapay Zekâ Kalıpları (AI Patterns)
+sonuc = analyze_text(metin, config)
 
-| Kimlik | Kural Adı | Önem | Hatalı / Sorunlu Örnek | Düzeltme Önerisi |
-|---|---|---|---|---|
-| `TD008` | `elbette-acilis` | `warn` | "Elbette! Size bu konuda yardımcı olayım." | Dalkavukça açılışı silin, doğrudan cevaba geçin. |
-| `TD009` | `harika-soru` | `warn` | "Harika bir soru sordunuz." | Övgü cümlesini silin, doğrudan cevap verin. |
-| `TD010` | `sonuc-olarak-kapanis` | `info` | "Sonuç olarak, bu yöntemlerin tümü etkilidir." | Kapanış paragrafını "Sonuç olarak" demeden, ana fikirle açın. |
-| `TD011` | `dunyasi-metaforu` | `info` | "Yapay zekâ dünyasında her gün yeni bir adım..." | "...dünyasında" yerine alanın adını söyleyin ("yapay zekâda", "yazılımda"). Yalnızca yazılım, teknoloji, dijital gibi klişeleşmiş alan adlarını yakalar; "çocukların dünyasında" gibi kullanımlara dokunmaz. |
-| `TD012` | `yolculuk-metaforu` | `warn` | "Dijital dönüşüm yolculuğumuz başladı." | Soyut işler için "yolculuk" yerine "süreç", "adımlar" ya da somut aşamaları yazın. Gerçek yolculuğa dokunmaz. |
-| `TD013` | `derinlemesine` | `info` | "Bu konuyu derinlemesine inceleyelim." | "Derinlemesine" yerine "ayrıntılı" deyin ya da doğrudan "inceleyelim" yazın. |
-| `TD014` | `kapsamli-sekilde` | `info` | "Raporu kapsamlı bir şekilde hazırladık." | "Kapsamlıca" ya da doğrudan fiil yeter. |
-| `TD015` | `uclu-sifat-dizisi` | `info` | "Hızlı, güvenli ve esnek bir yapı kurmalıyız." | Sıfatları azaltın; iddiayı somut bir örnekle destekleyin. Yalnızca "çözüm, yaklaşım, sistem" gibi soyut bir adla biten üçlüleri yakalar. |
-| `TD016` | `paragraf-acilis-tekrari` | `warn` | Ardışık iki paragrafın da "Ayrıca..." ile başlaması. | Paragraf girişlerini değiştirin. "Bu", "Şu" gibi zamirlerle başlayan paragraflar tekrar sayılmaz. |
+print(f"Sözcük sayısı : {sonuc.word_count}")
+print(f"Doğallık puanı: {sonuc.naturalness_score} / 100")
 
-### 3. Okunabilirlik ve Akış (Readability)
-
-| Kimlik | Kural Adı | Önem | Hatalı / Sorunlu Örnek | Düzeltme Önerisi |
-|---|---|---|---|---|
-| `TD017` | `cumle-uzunlugu` | `warn` | 35 sözcüğü aşan cümle. | Cümleyi ikiye bölün. |
-| `TD018` | `paragraf-uzunlugu` | `info` | 120 sözcüğü aşan paragraf. | Paragrafı bölün ya da alt başlık ekleyin. |
-| `TD019` | `yakin-kelime-tekrari` | `warn` | Aynı kökün (örn. "yaz-") bir cümlede üç kez geçmesi. | Zamir ya da eş anlamlı bir sözcük kullanın. |
-| `TD020` | `virgul-zinciri` | `info` | Bir cümlede beş ya da daha fazla virgül. | Cümleyi bölün ya da madde işaretli liste yapın. |
-| `TD025` | `veya-baglac-tekrari` | `info` | Bir cümlede üç ya da daha fazla "ve / veya". | Virgülle sıralayın ya da cümleyi bölün. |
-
-### 4. Yazım ve Tipografi (Spelling & Typography)
-
-| Kimlik | Kural Adı | Önem | Hatalı / Sorunlu Örnek | Düzeltme Önerisi |
-|---|---|---|---|---|
-| `TD021` | `de-da-baglaci` | `error` | "Gittide söylemedi" / "Bende geldim" / "Ev de kaldım" | Bağlaç olan "de/da" ayrı, bulunma durumu eki bitişik yazılır. Yalnızca anlamı karıştırmayan kalıpları yakalar: "Bende bir sorun var", "grupta", "kulüpte" doğru yazımlardır. |
-| `TD022` | `ki-baglaci` | `error` | "Gördümki her şey yolunda" / "Demekki" | Fiilden sonra gelen "ki" bağlaçtır, ayrı yazılır. |
-| `TD023` | `bilesik-ayri-yazim` | `error` | "herşey", "hiçbirşey", "bir çok", "farketmek" | TDK yazımını kullanın ("her şey", "birçok", "fark etmek"). |
-| `TD024` | `tirnak-tutarsizligi` | `info` | Aynı metinde hem düz `"` hem kıvrık `“”` tırnak karışımı. | Metin boyunca tek bir tırnak ve kesme stili kullanın. |
-
----
-
-## Doğallık Puanı Formülü
-
-Doğallık puanı 0 ile 100 arasında bir sayıdır ve bulguların yüz sözcüğe düşen yoğunluğunu ölçer.
-
-1. Her bulgu önem derecesine göre ceza katsayısı alır:
-   - **Error (Hata)**: $8.0$ puan
-   - **Warning (Uyarı)**: $3.0$ puan
-   - **Info (Bilgi)**: $1.0$ puan
-2. Toplam ceza, sözcük sayısına ($W$) göre yüz sözcüğe oranlanır. Kısa metinler fazla cezalanmasın diye en az 50 sözcük esas alınır:
-   $$\text{Normallestirilmis Ceza} = \frac{\sum \text{Cezalar} \times 100}{\max(W, 50)}$$
-3. Puan 0 ile 100 arasına sıkıştırılır ve bir ondalık basamağa yuvarlanır:
-   $$\text{Doğallık Puanı} = \max(0.0, \min(100.0, 100.0 - \text{Normallestirilmis Ceza}))$$
-
-### Puan Aralıkları
-
-| Puan Aralığı | Derece | Açıklama |
-|---|---|---|
-| **90.0 – 100.0** | Yüksek doğallık | Temiz, akıcı Türkçe. |
-| **75.0 – 89.9** | İyi | Okunur; birkaç kalıp ya da dolgu var. |
-| **50.0 – 74.9** | Orta | Yapay zekâ ya da çeviri kokusu belli oluyor; düzeltmek iyi olur. |
-| **0.0 – 49.9** | Düşük | Çok sayıda basmakalıp, çeviri kokusu ya da yazım hatası. |
-
----
-
-## Yapılandırma (`pyproject.toml`)
-
-Ayarlar projenin `pyproject.toml` dosyasında tutulur:
-
-```toml
-[tool.turkce-denetim]
-# Gösterilecek en düşük önem derecesi ("info", "warn", "error")
-min_severity = "info"
-
-# Kapatılacak kurallar
-disable = ["TD001", "TD014"]
-
-# Eşik değerleri
-max_sentence_words = 35
-max_paragraph_words = 120
-max_commas_per_sentence = 5
-min_word_repetition = 3
+for bulgu in sonuc.findings:
+    print(f"Satır {bulgu.line}:{bulgu.column} [{bulgu.rule_id}] {bulgu.message}")
+    if bulgu.suggestion:
+        print(f"  Öneri: {bulgu.suggestion}")
 ```
 
 ---
 
-## GitHub Actions Entegrasyonu
+## Pre-commit Entegrasyonu
 
-Pull request'lerde metinleri otomatik denetleyip bulguları GitHub Code Scanning sekmesinde görmek için:
+Projenizin `.pre-commit-config.yaml` dosyasına ekleyerek her commit öncesinde Markdown ve metin dosyalarını otomatik denetleyebilirsiniz:
 
 ```yaml
-name: Türkçe Metin Denetimi
+repos:
+  - repo: https://github.com/YusufBeratZengin/turkce-denetim
+    rev: v0.1.0
+    hooks:
+      - id: turkce-denetim
+```
+
+---
+
+## GitHub Actions CI Entegrasyonu
+
+Pull request'lerde metinleri denetlemek ve sonuçları GitHub Code Scanning (SARIF) sekmesinde incelemek için:
+
+```yaml
+name: Text Quality
 
 on:
   pull_request:
@@ -258,7 +212,7 @@ jobs:
       - name: turkce-denetim kur
         run: pip install turkce-denetim
 
-      - name: Metinleri denetle, SARIF üret
+      - name: Metinleri denetle ve SARIF üret
         run: turkce-denetim . --format sarif > sonuclar.sarif
         continue-on-error: true
 
@@ -270,43 +224,142 @@ jobs:
 
 ---
 
-## Pre-commit Entegrasyonu
+## Kural Kataloğu
 
-Projenizin `.pre-commit-config.yaml` dosyasına ekleyerek her commit öncesinde Markdown ve metin dosyalarını otomatik denetleyebilirsiniz:
+Linter, 4 temel kategoride 25 kural uygular:
 
-```yaml
-repos:
-  - repo: https://github.com/YusufBeratZengin/turkce-denetim
-    rev: v0.1.0
-    hooks:
-      - id: turkce-denetim
+### 1. Çeviri Kalıpları (Translation Patterns)
+
+| Kimlik | Kural Adı | Önem | Sorunlu Örnek | Öneri |
+|---|---|---|---|---|
+| `TD001` | `ile-birlikte-asiri` | `info` | "Teknolojinin gelişmesi ile birlikte..." | Yalın ek ("gelişmesiyle") veya doğrudan bağlaç kullanın. |
+| `TD002` | `bu-noktada` | `info` | "Bu noktada dikkat etmeliyiz." | "Burada", "bu aşamada" yazın veya doğrudan konuya girin. |
+| `TD003` | `gunun-sonunda` | `warn` | "Günün sonunda, karar verildi." | "At the end of the day" çevirisi. "Sonuçta" veya "nihayetinde" kullanın. Gün sonu zaman ifadesi ("Günün sonunda eve döndük") uyarılmaz. |
+| `TD004` | `onemlidir-ki` | `warn` | "Şunu belirtmek önemlidir ki bu bir hatadır." | "It is important that" çevirisi. "...belirtmek gerekir" veya "...önem taşır" tercih edin. |
+| `TD005` | `konusunda-yigilmasi` | `warn` | "Veri güvenliği konusunda ve mimari konusundaki..." | "...konusunda" yığılması yerine "-e dair" veya doğrudan ismin hâl eklerini kullanın. |
+| `TD006` | `sahip-olmak` | `warn` | "Bu cihaz yüksek bir hıza sahiptir." | "To have" çevirisi. İyelik eki ("cihazın hızı yüksektir") veya "vardır / bulunur" tercih edin. |
+| `TD007` | `edilgen-yigilmasi` | `warn` | "Planlar yapıldı, bütçe onaylandı ve görevler dağıtıldı." | Bir cümlede 3+ edilgen fiil. Etken çatılı fiillerle yeniden yazın. |
+
+### 2. Yapay Zekâ Kalıpları (AI Patterns)
+
+| Kimlik | Kural Adı | Önem | Sorunlu Örnek | Öneri |
+|---|---|---|---|---|
+| `TD008` | `elbette-acilis` | `warn` | "Elbette! Size yardımcı olabilirim." | Dalkavukça açılış. Doğrudan konuya veya yanıta girin. |
+| `TD009` | `harika-soru` | `warn` | "Harika bir soru sordunuz." | Sohbet robotu övgüsü. Cümleyi kaldırıp doğrudan yanıt verin. |
+| `TD010` | `sonuc-olarak-kapanis` | `info` | "Sonuç olarak, bu adımlar başarımızı artıracaktır." | Klişe kapanış geçişi. Kapanış paragrafına ana düşünceyle başlayın. |
+| `TD011` | `dunyasi-metaforu` | `info` | "Yapay zekâ dünyasında her gün yeni bir adım..." | "In the world of..." çevirisi. Doğrudan bulunma hâli kullanın: "yapay zekâda", "yazılımda". |
+| `TD012` | `yolculuk-metaforu` | `warn` | "Dijital dönüşüm yolculuğumuz başladı." | Süreçler için basmakalıp metafor. "Süreci", "adımları" veya "deneyimi" yazın. |
+| `TD013` | `derinlemesine` | `info` | "Bu konuyu derinlemesine inceleyelim." | Abartılı yapay zekâ zarfı. "Ayrıntılı biçimde" veya doğrudan fiili kullanın. |
+| `TD014` | `kapsamli-sekilde` | `info` | "Raporu kapsamlı bir şekilde hazırladık." | Dolgu ifade. "Kapsamlıca" veya doğrudan fiili tercih edin. |
+| `TD015` | `uclu-sifat-dizisi` | `info` | "Hızlı, esnek ve güvenli bir çözüm." | Basmakalıp üçlü sıfat zinciri. İddiaları paragrafa veya bağımsız ifadelere yayın. |
+| `TD016` | `paragraf-acilis-tekrari` | `warn` | Paragraf 1 ve 2'nin ikisinin de "Ayrıca..." ile başlaması. | Paragraf geçişlerini çeşitlendirin. |
+
+### 3. Okunabilirlik ve Yapı (Readability)
+
+| Kimlik | Kural Adı | Önem | Sorunlu Örnek | Öneri |
+|---|---|---|---|---|
+| `TD017` | `cumle-uzunlugu` | `warn` | 35 sözcüğü aşan uzun cümle. | İki veya daha fazla bağımsız cümleye bölün. |
+| `TD018` | `paragraf-uzunlugu` | `info` | 120 sözcüğü aşan uzun paragraf. | Alt başlıklara veya ayrı paragraflara ayırın. |
+| `TD019` | `yakin-kelime-tekrari` | `warn` | Aynı cümlenin içinde aynı kökün (örn: "yaz-") 3+ kez geçmesi. | Zamir, eşanlamlı sözcük kullanın veya cümleyi sadeleştirin. |
+| `TD020` | `virgul-zinciri` | `info` | Tek bir cümlede 5+ virgül bulunması. | Cümleyi bölün veya noktalı virgül / madde imi kullanın. |
+| `TD025` | `veya-baglac-tekrari` | `info` | Tek cümlede 3+ "ve / veya" bağlacı. | Virgüllü liste yapın ya da cümleyi bölün. |
+
+### 4. Yazım ve Tipografi (Spelling & Typography)
+
+| Kimlik | Kural Adı | Önem | Sorunlu Örnek | Öneri |
+|---|---|---|---|---|
+| `TD021` | `de-da-baglaci` | `error` | "Gittide söylemedi" / "Ev de kaldım" | Bağlaç olan "de/da" ayrı; bulunma hâli eki bitişik yazılır. |
+| `TD022` | `ki-baglaci` | `error` | "Gördümki her şey yolunda" / "Demekki" | Çekimli fiillerden sonra gelen "ki" bağlacı ayrı yazılır. |
+| `TD023` | `bilesik-ayri-yazim` | `error` | "herşey", "hiçbirşey", "bir çok", "farketmek" | TDK yazım kuralları ("her şey", "birçok", "fark etmek"). |
+| `TD024` | `tirnak-tutarsizligi` | `info` | Düz tırnak (`"`) ile tipografik tırnakların (`“”`) karışık kullanımı. | Belge genelinde tutarlı bir tırnak işareti stili benimseyin. |
+
+---
+
+## Doğallık Puanı Formülü
+
+Doğallık Puanı, yüz sözcük başına düşen bulgu yoğunluğunu ölçen sınırlı bir ölçüttür ($0.0 - 100.0$).
+
+1. Her bulgu önem derecesine göre ceza ağırlığı alır:
+   - **Hata (Error)**: $8.0$ ceza puanı
+   - **Uyarı (Warning)**: $3.0$ ceza puanı
+   - **Bilgi (Info)**: $1.0$ ceza puanı
+2. Toplam ceza, en az 50 sözcük tabanı gözetilerek toplam sözcük sayısı $W$ üzerinden normalize edilir:
+   $$\text{Ceza} = \frac{\sum \text{Ağırlıklar} \times 100}{\max(W, 50)}$$
+3. Nihai puan sınırlandırılır ve bir ondalık basamağa yuvarlanır:
+   $$\text{Puan} = \max(0.0, \min(100.0, 100.0 - \text{Ceza}))$$
+
+### Puan Değerlendirme Tablosu
+
+| Aralık | Değerlendirme | Tipik Durum |
+|---|---|---|
+| **90.0 – 100.0** | Yüksek Doğallık | Akıcı ve doğal Türkçe; kural bulgusu yok veya önemsiz düzeyde. |
+| **75.0 – 89.9** | İyi | Açık ve anlaşılır metin; az sayıda üslup dolgusu barındırır. |
+| **50.0 – 74.9** | Orta | Belirgin yapay zekâ veya çeviri kokusu. Düzeltme gerekir. |
+| **0.0 – 49.9** | Düşük | Ağır çeviri kalıpları, tekrarlayan klişeler veya yazım hataları. |
+
+---
+
+## Yapılandırma
+
+`turkce-denetim` aracını projenizin `pyproject.toml` dosyası altındaki `[tool.turkce-denetim]` bölümünden yapılandırabilirsiniz:
+
+```toml
+[tool.turkce-denetim]
+# En düşük raporlama düzeyi ("info", "warn", "error")
+min_severity = "info"
+
+# Devre dışı bırakılacak kural kimlikleri
+disable = ["TD001", "TD014"]
+
+# Eşik değerleri
+max_sentence_words = 35
+max_paragraph_words = 120
+max_commas_per_sentence = 5
+max_passive_per_sentence = 3
+min_word_repetition = 3
 ```
 
 ---
 
-## Python Kütüphanesi Olarak Kullanım
+## SSS ve Sınırlar (FAQ)
 
-```python
-from turkce_denetim import Config, analyze_text
+### Düşük puan metnin yapay zekâ tarafından yazıldığını kanıtlar mı?
+**Hayır.** `turkce-denetim` dil modellerinde ve makine çevirilerinde yaygın görülen üslup alışkanlıklarını, çeviri kalıplarını ve biçimsel tekrarları tespit eder. İnsan yazarlar da zaman zaman bu kalıpları kullanabilir; yapay zekâ metinleri de düzenlenerek 100 puan alabilir. Doğallık puanı yazara yol gösteren bir analiz aracıdır, bir telif damgası değildir.
 
-metin = "Bu noktada konuyu derinlemesine incelemek çok önemlidir ki sonuç alalım."
-config = Config(min_severity="warn")  # "info", "warn" ya da "error"
+### Tamamen çevrimdışı ve kapalı ağlarda çalışabilir mi?
+**Evet.** `turkce-denetim` hiçbir harici bağımlılığa sahip değildir ve internet bağlantısı gerektirmez. Python 3.10 veya üzeri kurulu olan her ortamda yerel olarak güvenle çalışır.
 
-sonuc = analyze_text(metin, config)
+### Hangi dosya biçimlerini destekler?
+Markdown (`.md`) ve düz metin (`.txt`) dosyalarını işler. Markdown dosyalarında kod blokları (```` ``` ````, `~~~`), HTML yorumları (`<!-- ... -->`) ve satır içi kodlar (`` `...` ``) boşlukla maskelenir; böylece kod satırları yalancı pozitif üretmezken satır ve sütun numaraları tam olarak korunur.
 
-print(f"Sözcük sayısı : {sonuc.word_count}")
-print(f"Doğallık puanı: {sonuc.naturalness_score} / 100")
+### Türkçe noktalı ve noktasız I harfleri nasıl ele alınıyor?
+Türkçede büyük `I` küçük `ı`'ya, büyük `İ` ise küçük `i`'ye dönüşür. Standart kütüphanedeki `lower()` fonksiyonları sistem diline göre bu kuralı bozabilir. `turkce-denetim`, işletim sistemi yerelinden bağımsız çalışan özel Türkçe harf dönüştürme algoritmalarına sahiptir.
 
-for bulgu in sonuc.findings:
-    print(f"Satır {bulgu.line}:{bulgu.column} [{bulgu.rule_id}] {bulgu.message}")
-    if bulgu.suggestion:
-        print(f"  Öneri: {bulgu.suggestion}")
+---
+
+## Katkıda Bulunma
+
+Topluluk katkılarını memnuniyetle karşılıyoruz! Geliştirme ortamı kurulumu, test rehberi ve kod standartları için lütfen [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını inceleyin.
+
+```bash
+# Depoyu klonlayın ve geliştirici ortamını hazırlayın
+git clone https://github.com/YusufBeratZengin/turkce-denetim.git
+cd turkce-denetim
+python -m venv .venv
+source .venv/bin/activate  # Windows: .\.venv\Scripts\activate
+pip install -e ".[dev]"
+
+# Testleri ve denetleyicileri çalıştırın
+pytest
+ruff check .
+ruff format --check .
+mypy src tests
 ```
 
 ---
 
 ## Lisans
 
-Bu proje [MIT Lisansı](LICENSE) kapsamında lisanslanmıştır.
+Bu proje MIT Lisansı kapsamında lisanslanmıştır. Ayrıntılar için [LICENSE](LICENSE) dosyasına bakabilirsiniz.
 
 Copyright (c) 2026 Yusuf Berat Zengin
