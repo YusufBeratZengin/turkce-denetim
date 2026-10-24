@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
-import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from turkce_denetim.models import Severity
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 
 class ConfigError(ValueError):
@@ -54,54 +58,6 @@ class Config:
             self.min_severity = Severity.from_str(str(self.min_severity))
 
 
-def _parse_simple_toml_table(content: str, table_name: str) -> dict[str, Any]:
-    """Python 3.10 için stdlib harici bağımlılık olmadan basit toml tablosu ayrıştırıcı."""
-    data: dict[str, Any] = {}
-    lines = content.splitlines()
-    in_target = False
-
-    for line in lines:
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#"):
-            continue
-
-        if stripped.startswith("[") and stripped.endswith("]"):
-            header = stripped[1:-1].strip()
-            in_target = header == table_name
-            continue
-
-        if not in_target:
-            continue
-
-        if "=" in stripped:
-            key, val = stripped.split("=", 1)
-            key = key.strip()
-            val = val.strip()
-
-            # Array
-            if val.startswith("[") and val.endswith("]"):
-                items_str = val[1:-1].strip()
-                if not items_str:
-                    data[key] = []
-                else:
-                    raw_items = [i.strip().strip("\"'") for i in items_str.split(",") if i.strip()]
-                    data[key] = raw_items
-            elif val.startswith('"') and val.endswith('"'):
-                data[key] = val[1:-1]
-            elif val.startswith("'") and val.endswith("'"):
-                data[key] = val[1:-1]
-            elif val.lower() in ("true", "false"):
-                data[key] = val.lower() == "true"
-            elif re.match(r"^-?\d+$", val):
-                data[key] = int(val)
-            elif re.match(r"^-?\d+\.\d+$", val):
-                data[key] = float(val)
-            else:
-                data[key] = val
-
-    return data
-
-
 def load_config_from_file(config_path: Path | str) -> Config:
     """Belirtilen TOML dosyasından [tool.turkce-denetim] ayarlarını yükler."""
     p = Path(config_path)
@@ -111,27 +67,25 @@ def load_config_from_file(config_path: Path | str) -> Config:
     content = p.read_text(encoding="utf-8")
     table_data: dict[str, Any] = {}
 
-    if sys.version_info >= (3, 11):
-        import tomllib
+    try:
+        raw_data = tomllib.loads(content)
+    except tomllib.TOMLDecodeError as err:
+        raise ConfigError(f"Geçersiz TOML sözdizimi: {err}") from err
 
-        try:
-            raw_data = tomllib.loads(content)
-        except Exception as err:
-            raise ConfigError(f"Geçersiz TOML sözdizimi: {err}") from err
-
-        tool_section = raw_data.get("tool", {})
-        if "turkce-denetim" in tool_section:
-            table_data = tool_section["turkce-denetim"]
-            if not isinstance(table_data, dict):
-                raise ConfigError("[tool.turkce-denetim] bir tablo (dict) olmalıdır.")
-    else:
-        table_data = _parse_simple_toml_table(content, "tool.turkce-denetim")
+    tool_section = raw_data.get("tool", {})
+    if not isinstance(tool_section, dict):
+        raise ConfigError("[tool] bir tablo (dict) olmalıdır.")
+    if "turkce-denetim" in tool_section:
+        table_data = tool_section["turkce-denetim"]
+        if not isinstance(table_data, dict):
+            raise ConfigError("[tool.turkce-denetim] bir tablo (dict) olmalıdır.")
 
     min_sev = Severity.INFO
     disable_list: list[str] = []
     max_sentence_words = 35
     max_paragraph_words = 120
     max_commas_per_sentence = 5
+    max_passive_per_sentence = 3
     min_word_repetition = 3
 
     if table_data:

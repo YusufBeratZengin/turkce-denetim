@@ -188,37 +188,42 @@ disable = 123
     assert "liste veya virgülle ayrılmış" in str(exc_info.value)
 
 
-def test_parse_simple_toml_table_standalone() -> None:
-    from turkce_denetim.config import _parse_simple_toml_table
-
-    sample = """
+def test_load_toml_multiline_and_comments(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "multiline.toml"
+    cfg_file.write_text(
+        """
 # Baştaki yorum
 [other.table]
 ignored = 1
 
 [tool.turkce-denetim]
-min_severity = "warn"
-single_quoted = 'test'
-is_active = true
-is_disabled = false
-count = 42
-negative = -10
-ratio = 3.14
-empty_list = []
-items = ["a", 'b', c]
-raw = unquoted_text
-"""
-    parsed = _parse_simple_toml_table(sample, "tool.turkce-denetim")
-    assert parsed["min_severity"] == "warn"
-    assert parsed["single_quoted"] == "test"
-    assert parsed["is_active"] is True
-    assert parsed["is_disabled"] is False
-    assert parsed["count"] == 42
-    assert parsed["negative"] == -10
-    assert parsed["ratio"] == 3.14
-    assert parsed["empty_list"] == []
-    assert parsed["items"] == ["a", "b", "c"]
-    assert parsed["raw"] == "unquoted_text"
+min_severity = 'warn' # Satır sonu yorumu
+disable = [
+    "TD001",
+    'TD002',
+]
+""",
+        encoding="utf-8",
+    )
+    config = load_config_from_file(cfg_file)
+    assert config.min_severity.value == "warn"
+    assert config.disable == ["TD001", "TD002"]
+
+
+@pytest.mark.parametrize("content", ["", "[tool.turkce-denetim]\n", "[other]\nx = 1\n"])
+def test_missing_or_empty_table_uses_defaults(tmp_path: Path, content: str) -> None:
+    from turkce_denetim.config import Config
+
+    cfg_file = tmp_path / "empty.toml"
+    cfg_file.write_text(content, encoding="utf-8")
+    assert load_config_from_file(cfg_file) == Config()
+
+
+def test_tool_section_not_dict_raises_config_error(tmp_path: Path) -> None:
+    cfg_file = tmp_path / "bad_tool.toml"
+    cfg_file.write_text('tool = "not-a-table"', encoding="utf-8")
+    with pytest.raises(ConfigError, match=r"\[tool\].*bir tablo"):
+        load_config_from_file(cfg_file)
 
 
 def test_find_and_load_config_fallback(tmp_path: Path) -> None:
