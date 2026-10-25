@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `python -m turkce_denetim` entry point.
+- Comprehensive example suite: runnable Python API script (`examples/api_usage.py`), annotated configuration template (`examples/custom_config.toml`), pre-commit hook configuration (`examples/pre-commit-config.yaml`), and `examples/README.md`.
+- Automated example integrity and execution tests in `tests/test_examples.py`.
+- Documentation links to security policy and changelog in both English and Turkish READMEs, along with expanded contributing guidelines.
 
 ### Fixed
 - Far fewer false positives on natural Turkish: `TD001` (only separated "ile birlikte", now `info`), `TD002`/`TD003` (sentence-initial only), `TD006` ("sahip olmak"/"sahip çıkmak"), `TD007` (active verbs such as "kullanıyor", "gülüyor"), `TD008`, `TD011` (cliché domains only), `TD012` ("bir yolculuğa çıktık"), `TD015` (name lists), `TD016` ("Bu ..." openers) and `TD021` ("grupta", "kulüpte", "Bende bir sorun var").

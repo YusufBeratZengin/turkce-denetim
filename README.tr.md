@@ -168,6 +168,8 @@ for bulgu in sonuc.findings:
         print(f"  Öneri: {bulgu.suggestion}")
 ```
 
+Python API'sinin doğrudan çalıştırılabilir örnek betiği için [examples/api_usage.py](examples/api_usage.py) dosyasına bakabilirsiniz. Ayrıca [examples/custom_config.toml](examples/custom_config.toml) ve [examples/pre-commit-config.yaml](examples/pre-commit-config.yaml) dosyalarını inceleyebilirsiniz.
+
 ---
 
 ## Pre-commit Entegrasyonu
@@ -334,6 +336,18 @@ Markdown (`.md`) ve düz metin (`.txt`) dosyalarını işler. Markdown dosyalar�
 
 ### Türkçe noktalı ve noktasız I harfleri nasıl ele alınıyor?
 Türkçede büyük `I` küçük `ı`'ya, büyük `İ` ise küçük `i`'ye dönüşür. Standart kütüphanedeki `lower()` fonksiyonları sistem diline göre bu kuralı bozabilir. `turkce-denetim`, işletim sistemi yerelinden bağımsız çalışan özel Türkçe harf dönüştürme algoritmalarına sahiptir.
+
+---
+
+## Güvenlik
+
+Güvenlik açığı bildirme adımları ve desteklenen sürümler için lütfen [SECURITY.md](SECURITY.md) dosyasına bakınız.
+
+---
+
+## Değişiklik Günlüğü
+
+Sürüm geçmişi ve yapılan geliştirmeler için [CHANGELOG.md](CHANGELOG.md) dosyasını inceleyebilirsiniz.
 
 ---
 

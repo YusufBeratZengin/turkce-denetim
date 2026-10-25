@@ -168,6 +168,8 @@ for finding in result.findings:
         print(f"  Suggestion: {finding.suggestion}")
 ```
 
+For a standalone executable script demonstrating library usage, see [examples/api_usage.py](examples/api_usage.py). See also [examples/custom_config.toml](examples/custom_config.toml) and [examples/pre-commit-config.yaml](examples/pre-commit-config.yaml).
+
 ---
 
 ## Pre-commit Integration
@@ -334,6 +336,18 @@ min_word_repetition = 3
 
 ### How does it handle Turkish dotted and dotless I?
 Turkish uppercase `I` becomes lowercase `ı`, and uppercase `İ` becomes lowercase `i`. Standard library lowercase routines often mishandle this depending on system locale. `turkce-denetim` incorporates dedicated, locale-independent Turkish casing and casefolding algorithms.
+
+---
+
+## Security
+
+For security reporting instructions and supported versions, please refer to [SECURITY.md](SECURITY.md).
+
+---
+
+## Changelog
+
+Release history and notable changes are documented in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 

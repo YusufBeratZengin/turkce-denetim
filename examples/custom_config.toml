@@ -1,0 +1,27 @@
+# turkce-denetim örnek yapılandırma dosyası
+# Bu dosya, kuralları ve eşik değerlerini özelleştirmek için kullanılabilir.
+# Kullanım: turkce-denetim metin.md --config examples/custom_config.toml
+# ya da projenizin kök dizinindeki pyproject.toml içine [tool.turkce-denetim] altına ekleyebilirsiniz.
+
+[tool.turkce-denetim]
+# Raporlanacak en düşük önem derecesi: "info", "warn" veya "error"
+min_severity = "warn"
+
+# Devre dışı bırakılacak kural kimlikleri listesi
+# Örnek: TD001 (ile-birlikte-asiri), TD014 (kapsamli-sekilde)
+disable = ["TD001", "TD014"]
+
+# Maksimum cümle uzunluğu (sözcük sayısı; varsayılan: 35)
+max_sentence_words = 35
+
+# Maksimum paragraf uzunluğu (sözcük sayısı; varsayılan: 120)
+max_paragraph_words = 120
+
+# Bir cümlede izin verilen maksimum virgül sayısı (varsayılan: 5)
+max_commas_per_sentence = 5
+
+# Bir cümlede izin verilen maksimum edilgen fiil sayısı (varsayılan: 3)
+max_passive_per_sentence = 3
+
+# Yakın sözcük kök tekrarı için minimum eşik (varsayılan: 3)
+min_word_repetition = 3

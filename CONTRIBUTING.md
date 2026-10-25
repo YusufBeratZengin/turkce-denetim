@@ -68,3 +68,24 @@ Use Conventional Commits with concise, explanatory English messages:
 - `fix(spelling): handle edge case in ...`
 - `test(casing): add coverage for ...`
 - `docs: update rule table with ...`
+
+## Reporting False Positives
+
+Reducing false positives on idiomatic, natural Turkish is an ongoing priority. If an existing rule incorrectly flags legitimate phrasing:
+1. Open a **False Positive Report** using the issue template.
+2. Provide the minimal natural sentence that triggered the issue and a brief justification.
+3. If possible, suggest an improved regex heuristic or negative guard test case.
+
+## Determinism and AI Policy
+
+- `turkce-denetim` is fundamentally rule-based with zero external runtime dependencies and zero LLM calls.
+- PRs proposing new rules must use pure Python standard library regex or morphological heuristics.
+- Any AI-assisted code contributions must be thoroughly tested, readable, and verified by the author.
+
+## Security
+
+Please do not report security vulnerabilities in public GitHub issues. Follow the confidential reporting instructions in [SECURITY.md](SECURITY.md).
+
+## Code of Conduct
+
+All contributors and maintainers are expected to follow our [Code of Conduct](CODE_OF_CONDUCT.md).

@@ -1,0 +1,11 @@
+# Example .pre-commit-config.yaml for turkce-denetim
+# Place this in your repository root or merge into your existing configuration.
+# Run 'pre-commit run --all-files' to inspect all Markdown and text files.
+
+repos:
+  - repo: https://github.com/YusufBeratZengin/turkce-denetim
+    rev: v0.1.0
+    hooks:
+      - id: turkce-denetim
+        # Optional: customize arguments
+        # args: ["--min-severity", "warn", "--no-color"]

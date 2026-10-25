@@ -69,10 +69,12 @@ packages = ["src/turkce_denetim"]
 include = [
     "/src",
     "/tests",
+    "/examples",
     "/README.md",
     "/README.tr.md",
     "/CHANGELOG.md",
     "/CONTRIBUTING.md",
+    "/SECURITY.md",
     "/LICENSE",
 ]
 
